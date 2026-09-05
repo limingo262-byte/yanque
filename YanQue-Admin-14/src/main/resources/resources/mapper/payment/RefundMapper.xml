@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yanque.modules.payment.mapper.RefundMapper">
+  <select id="selectPage" resultType="cn.yanque.modules.payment.pojo.RefundModels$Item">
+    select * from order_refund <where>
+      <if test="req.refundOrderNo != null and req.refundOrderNo != ''">and refund_order_no like concat('%',#{req.refundOrderNo},'%')</if>
+      <if test="req.paymentOrderNo != null and req.paymentOrderNo != ''">and payment_order_no like concat('%',#{req.paymentOrderNo},'%')</if>
+      <if test="req.status != null and req.status != ''">and status=#{req.status}</if>
+    </where> order by id desc
+  </select>
+  <select id="selectPaymentForUpdate" resultType="cn.yanque.modules.payment.pojo.PaymentModels$PaymentOrderItem">
+    select * from order_payment where order_no=#{orderNo} for update
+  </select>
+  <select id="countRefundNo" resultType="int">select count(1) from order_refund where refund_order_no=#{refundNo}</select>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    insert into order_refund(refund_order_no,payment_order_no,payment_amount,refund_amount,status,reason,created_at,updated_at)
+    values(#{refundOrderNo},#{paymentOrderNo},#{paymentAmount},#{refundAmount},'INIT',#{reason},now(),now())
+  </insert>
+  <update id="reserveAmount">
+    update order_payment set refunded_amount=refunded_amount+#{amount},updated_at=now()
+    where order_no=#{orderNo} and status='SUCCESS' and refunded_amount+#{amount} &lt;= order_amount
+  </update>
+  <update id="releaseAmount">update order_payment set refunded_amount=greatest(refunded_amount-#{amount},0),updated_at=now() where order_no=#{orderNo}</update>
+  <update id="markSuccess">update order_refund set status='SUCCESS',unique_refund_no=#{tradeNo},refund_success_time=now(),updated_at=now() where refund_order_no=#{refundNo} and status='INIT'</update>
+  <update id="markFail">update order_refund set status='FAIL',fail_reason=#{reason},updated_at=now() where refund_order_no=#{refundNo} and status='INIT'</update>
+</mapper>

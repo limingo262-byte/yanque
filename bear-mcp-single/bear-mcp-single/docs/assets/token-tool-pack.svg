@@ -1,0 +1,71 @@
+<svg width="1280" height="640" viewBox="0 0 1280 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Token 工具包拆分</title>
+  <desc id="desc">同一用户可以创建多把 Token，每把 Token 只选择当前 Agent 场景需要的工具，避免把所有工具一次性暴露给模型</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}.card{fill:#fff;stroke:#d8e2ee;stroke-width:1.6}.dark{fill:#172033}.muted{fill:#f1f5f9;stroke:#cbd5e1}.blue{fill:#eff6ff;stroke:#93c5fd}.green{fill:#f0fdf4;stroke:#86efac}.orange{fill:#fff7ed;stroke:#fdba74}.cyan{fill:#ecfeff;stroke:#67e8f9}.red{fill:#fff1f2;stroke:#fda4af}.purple{fill:#f5f3ff;stroke:#c4b5fd}.title{fill:#172033;font:700 28px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.h{fill:#172033;font:700 18px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.sub{fill:#64748b;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.tiny{fill:#64748b;font:12px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.white{fill:#fff;font:700 18px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.wsub{fill:#cbd5e1;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.line{stroke:#94a3b8;stroke-width:2.5;fill:none;marker-end:url(#arrow)}.dash{stroke:#94a3b8;stroke-width:2;fill:none;stroke-dasharray:7 6;marker-end:url(#arrow)}.bad{stroke:#fb7185;stroke-width:2.4;fill:none;stroke-dasharray:7 6;marker-end:url(#badArrow)}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/></marker>
+    <marker id="badArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#fb7185"/></marker>
+  </defs>
+
+  <rect class="bg" width="1280" height="640" rx="24"/>
+  <text class="title" x="48" y="58">Token 工具包：按 Agent 场景缩小模型选择空间</text>
+  <text class="sub" x="48" y="84">不是把企业所有工具一次性塞给模型，而是每把 Token 只加载当前任务需要的 Tools / Prompts / Resources。</text>
+
+  <rect class="dark" x="58" y="248" width="170" height="96" rx="18"/>
+  <text class="white" x="100" y="286">同一用户</text>
+  <text class="wsub" x="88" y="314">角色授权上限</text>
+  <text class="wsub" x="84" y="336">可覆盖多个场景</text>
+
+  <path class="line" d="M228 296 H318"/>
+
+  <rect class="card" x="318" y="142" width="250" height="350" rx="22"/>
+  <text class="h" x="364" y="178">Token 选择层</text>
+  <text class="sub" x="348" y="204">每个 Token 绑定一组能力</text>
+
+  <rect class="blue" x="350" y="232" width="186" height="54" rx="14"/>
+  <text class="h" x="386" y="257">数据分析 Token</text>
+  <text class="tiny" x="398" y="276">只看数据与指标</text>
+
+  <rect class="green" x="350" y="310" width="186" height="54" rx="14"/>
+  <text class="h" x="386" y="335">研发排障 Token</text>
+  <text class="tiny" x="398" y="354">只看日志与手册</text>
+
+  <rect class="orange" x="350" y="388" width="186" height="54" rx="14"/>
+  <text class="h" x="386" y="413">运营客服 Token</text>
+  <text class="tiny" x="396" y="432">只看用户与订单</text>
+
+  <path class="line" d="M536 258 C620 240 650 198 720 198"/>
+  <path class="line" d="M536 337 C620 337 650 320 720 320"/>
+  <path class="line" d="M536 415 C620 436 650 464 720 464"/>
+
+  <rect class="card" x="720" y="116" width="500" height="434" rx="22"/>
+  <text class="h" x="760" y="152">模型实际看到的候选工具更少、更聚焦</text>
+  <text class="sub" x="760" y="178">tools/list 只返回当前 Token 选择且角色有权限的能力</text>
+
+  <rect class="blue" x="760" y="204" width="410" height="70" rx="14"/>
+  <text class="h" x="786" y="232">数据分析工具包</text>
+  <text class="sub" x="786" y="255">数据源查询 / 指标口径 Prompt / 报表 Resource</text>
+
+  <rect class="green" x="760" y="326" width="410" height="70" rx="14"/>
+  <text class="h" x="786" y="354">研发排障工具包</text>
+  <text class="sub" x="786" y="377">日志查询 / 健康检查 / 故障手册 Resource</text>
+
+  <rect class="orange" x="760" y="448" width="410" height="70" rx="14"/>
+  <text class="h" x="786" y="476">运营客服工具包</text>
+  <text class="sub" x="786" y="499">用户查询 / 订单查询 / 售后状态查询</text>
+
+  <rect class="red" x="58" y="500" width="510" height="88" rx="18"/>
+  <text class="h" x="88" y="534">如果所有工具放在一起</text>
+  <text class="sub" x="88" y="560">工具描述和 schema 全进入上下文，模型要在大量相似工具里选择。</text>
+  <text class="sub" x="88" y="582">结果：上下文成本更高，误选工具概率更高，调用结果更难解释。</text>
+
+  <path class="bad" d="M310 500 C370 450 410 468 450 442"/>
+  <path class="dash" d="M1000 274 C1060 294 1080 310 1120 326"/>
+  <path class="dash" d="M1000 396 C1060 416 1080 432 1120 448"/>
+
+  <rect class="purple" x="760" y="566" width="410" height="42" rx="12"/>
+  <text class="h" x="786" y="593">一句话：</text>
+  <text class="sub" x="872" y="593">角色定上限，Token 定本次 Agent 的工具箱。</text>
+</svg>

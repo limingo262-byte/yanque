@@ -1,0 +1,26 @@
+$login = Invoke-RestMethod -Uri 'http://127.0.0.1:8081/yq-admin/api/sysUser/login' -Method Post -ContentType 'application/json' -Body '{"username":"admin","password":"123456"}'
+$token = $login.data.token
+$secret = $login.data.signSecret
+$path = '/yq-admin/api/ai/text-to-sql/analyze'
+$timestamp = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds().ToString()
+$nonce = [guid]::NewGuid().ToString('N')
+$source = "POST`n$path`n`n$timestamp`n$nonce"
+$hmac = [System.Security.Cryptography.HMACSHA256]::new([Text.Encoding]::UTF8.GetBytes($secret))
+$sign = ([BitConverter]::ToString($hmac.ComputeHash([Text.Encoding]::UTF8.GetBytes($source)))).Replace('-', '').ToLowerInvariant()
+$headers = [hashtable]::new()
+$headers['Authorization'] = "Bearer $token"
+$headers['X-Timestamp'] = $timestamp
+$headers['X-Nonce'] = $nonce
+$headers['X-Sign'] = $sign
+$body = '{"question":"How many students are in each class, sorted descending","maxRows":100}'
+$result = Invoke-RestMethod -Uri ('http://127.0.0.1:8081' + $path) -Method Post -Headers $headers -ContentType 'application/json; charset=UTF-8' -Body $body -TimeoutSec 180
+$data = $result.data
+Write-Output ('response=' + ($result | ConvertTo-Json -Depth 8 -Compress))
+Write-Output ('api_code=' + $result.code)
+Write-Output ('run_record_id=' + $data.runRecordId)
+Write-Output ('intent=' + $data.intent)
+Write-Output ('business_domain=' + $data.businessDomain)
+Write-Output ('need_clarification=' + $data.needClarification)
+Write-Output ('sql=' + $data.sql)
+Write-Output ('rows=' + ($data.rows | ConvertTo-Json -Compress))
+Write-Output ("answer=" + $data.answer)

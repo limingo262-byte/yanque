@@ -1,0 +1,45 @@
+<svg width="1280" height="620" viewBox="0 0 1280 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">为什么公司需要 MCP 中台</title>
+  <desc id="desc">对比没有 MCP 中台时多个 Agent 重复接入企业系统，以及有 MCP 中台后统一复用企业工具资产</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}.card{fill:#fff;stroke:#d8e2ee;stroke-width:1.5}.bad{fill:#fef2f2;stroke:#fca5a5}.good{fill:#f0fdf4;stroke:#86efac}.blue{fill:#eff6ff;stroke:#93c5fd}.purple{fill:#f5f3ff;stroke:#c4b5fd}.dark{fill:#172033}.title{fill:#172033;font:700 28px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.h{fill:#172033;font:700 18px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.sub{fill:#64748b;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.white{fill:#fff;font:700 17px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.line{stroke:#94a3b8;stroke-width:2.4;fill:none;marker-end:url(#arrow)}.dash{stroke:#94a3b8;stroke-width:2.1;fill:none;stroke-dasharray:7 6;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/></marker>
+  </defs>
+  <rect class="bg" width="1280" height="620" rx="24"/>
+  <text class="title" x="46" y="58">为什么公司需要 MCP 中台</text>
+  <text class="sub" x="46" y="84">公司要快速构建多个 Agent，关键不是模型能力，而是企业内部能力如何低成本、安全、可复用地接入。</text>
+
+  <rect class="bad" x="58" y="126" width="520" height="390" rx="22"/>
+  <text class="h" x="104" y="166">没有 MCP 中台</text>
+  <text class="sub" x="104" y="194">每个 Agent 都重复接入底层系统</text>
+  <rect class="dark" x="100" y="238" width="120" height="54" rx="12"/><text class="white" x="126" y="272">研发 Agent</text>
+  <rect class="dark" x="100" y="326" width="120" height="54" rx="12"/><text class="white" x="126" y="360">运营 Agent</text>
+  <rect class="dark" x="100" y="414" width="120" height="54" rx="12"/><text class="white" x="126" y="448">数据 Agent</text>
+  <rect class="card" x="386" y="238" width="140" height="54" rx="12"/><text class="h" x="420" y="272">业务接口</text>
+  <rect class="card" x="386" y="326" width="140" height="54" rx="12"/><text class="h" x="430" y="360">数据库</text>
+  <rect class="card" x="386" y="414" width="140" height="54" rx="12"/><text class="h" x="438" y="448">文档</text>
+  <path class="dash" d="M220 265 H386"/><path class="dash" d="M220 353 H386"/><path class="dash" d="M220 441 H386"/>
+  <text class="sub" x="104" y="548">问题：重复开发、权限分散、审计缺失、治理困难</text>
+
+  <rect class="good" x="704" y="126" width="520" height="390" rx="22"/>
+  <text class="h" x="750" y="166">有 MCP 中台</text>
+  <text class="sub" x="750" y="194">底层能力一次封装，多类 Agent 复用</text>
+  <rect class="dark" x="746" y="238" width="120" height="54" rx="12"/><text class="white" x="772" y="272">Codex</text>
+  <rect class="dark" x="746" y="326" width="120" height="54" rx="12"/><text class="white" x="772" y="360">Cursor</text>
+  <rect class="dark" x="746" y="414" width="120" height="54" rx="12"/><text class="white" x="772" y="448">自研 Agent</text>
+
+  <rect class="blue" x="922" y="272" width="150" height="130" rx="18"/>
+  <text class="h" x="958" y="310">MCP 中台</text>
+  <text class="sub" x="952" y="340">工具化封装</text>
+  <text class="sub" x="952" y="366">权限 / 审计</text>
+  <text class="sub" x="952" y="392">统一复用</text>
+  <path class="line" d="M866 265 C900 280 910 300 922 315"/><path class="line" d="M866 353 H922"/><path class="line" d="M866 441 C900 426 910 406 922 384"/>
+
+  <rect class="purple" x="1112" y="238" width="76" height="54" rx="12"/><text class="h" x="1128" y="272">接口</text>
+  <rect class="purple" x="1112" y="326" width="76" height="54" rx="12"/><text class="h" x="1124" y="360">数据</text>
+  <rect class="purple" x="1112" y="414" width="76" height="54" rx="12"/><text class="h" x="1124" y="448">知识</text>
+  <path class="line" d="M1072 337 C1094 300 1102 278 1112 265"/><path class="line" d="M1072 337 H1112"/><path class="line" d="M1072 337 C1094 376 1102 426 1112 441"/>
+  <text class="sub" x="750" y="548">价值：快速搭 Agent、减少重复建设、统一安全边界、调用可追踪</text>
+</svg>

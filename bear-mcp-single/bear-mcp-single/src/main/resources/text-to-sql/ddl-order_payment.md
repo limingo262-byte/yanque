@@ -1,0 +1,1 @@
+{"table_name":"order_payment","description":"订单支付记录","columns":[{"name":"id","type":"BIGINT","description":"主键"},{"name":"pay_amount","type":"DECIMAL","description":"支付金额"},{"name":"pay_time","type":"DATETIME","description":"支付时间"},{"name":"status","type":"VARCHAR","description":"支付状态"}],"queryable_columns":["id","pay_amount","pay_time","status"]}

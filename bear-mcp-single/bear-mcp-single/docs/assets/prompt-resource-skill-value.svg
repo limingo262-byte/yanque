@@ -1,0 +1,57 @@
+<svg width="1280" height="640" viewBox="0 0 1280 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Prompt Resource Skill 的企业资产价值</title>
+  <desc id="desc">Resource 沉淀公司内部文档，Prompt 沉淀可复用流程和表达模板，Skill 把工具提示词资源打包成 Agent 能力包</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}.panel{fill:#fff;stroke:#d8e2ee;stroke-width:1.6}.dark{fill:#172033}.blue{fill:#eff6ff;stroke:#93c5fd}.green{fill:#f0fdf4;stroke:#86efac}.cyan{fill:#ecfeff;stroke:#67e8f9}.purple{fill:#f5f3ff;stroke:#c4b5fd}.orange{fill:#fff7ed;stroke:#fdba74}.gray{fill:#f1f5f9;stroke:#cbd5e1}.title{fill:#172033;font:700 28px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.h{fill:#172033;font:700 18px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.sub{fill:#64748b;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.tiny{fill:#64748b;font:12px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.white{fill:#fff;font:700 18px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.wsub{fill:#cbd5e1;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.line{stroke:#94a3b8;stroke-width:2.4;fill:none;marker-end:url(#arrow)}.dash{stroke:#94a3b8;stroke-width:2.1;fill:none;stroke-dasharray:7 6;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/></marker>
+  </defs>
+
+  <rect class="bg" width="1280" height="640" rx="24"/>
+  <text class="title" x="52" y="62">Prompt、Resource、Skill：把知识和流程沉淀成 Agent 资产</text>
+  <text class="sub" x="52" y="88">Tool 负责“能做什么”，Prompt / Resource / Skill 负责“怎么做、依据什么做、如何复用”。</text>
+
+  <rect class="panel" x="58" y="132" width="1164" height="382" rx="24"/>
+
+  <rect class="blue" x="100" y="188" width="236" height="210" rx="20"/>
+  <text class="h" x="180" y="226">Tool</text>
+  <text class="sub" x="138" y="258">可执行动作</text>
+  <text class="tiny" x="130" y="292">查订单 / 查数据库</text>
+  <text class="tiny" x="130" y="318">调 API / 触发流程</text>
+  <text class="tiny" x="130" y="344">执行动态工具</text>
+
+  <rect class="cyan" x="382" y="188" width="236" height="210" rx="20"/>
+  <text class="h" x="456" y="226">Resource</text>
+  <text class="sub" x="424" y="258">公司内部知识</text>
+  <text class="tiny" x="412" y="292">制度文档 / 业务手册</text>
+  <text class="tiny" x="412" y="318">接口说明 / 指标口径</text>
+  <text class="tiny" x="412" y="344">排障文档 / SOP</text>
+
+  <rect class="green" x="664" y="188" width="236" height="210" rx="20"/>
+  <text class="h" x="742" y="226">Prompt</text>
+  <text class="sub" x="704" y="258">可复用流程模板</text>
+  <text class="tiny" x="694" y="292">分析步骤 / 输出格式</text>
+  <text class="tiny" x="694" y="318">客服话术 / 报告模板</text>
+  <text class="tiny" x="694" y="344">SQL 生成约束</text>
+
+  <path class="line" d="M900 293 H960"/>
+  <rect class="purple" x="960" y="188" width="220" height="210" rx="20"/>
+  <text class="h" x="1032" y="226">Skill</text>
+  <text class="sub" x="1004" y="258">Agent 能力包</text>
+  <text class="tiny" x="994" y="292">组合 Tool + Prompt</text>
+  <text class="tiny" x="994" y="318">绑定 Resource 说明</text>
+  <text class="tiny" x="994" y="344">打包成可复用能力</text>
+
+  <path class="dash" d="M336 292 H382"/>
+  <path class="dash" d="M618 292 H664"/>
+  <path class="dash" d="M1070 398 V444"/>
+
+  <rect class="orange" x="350" y="444" width="580" height="46" rx="14"/>
+  <text class="h" x="412" y="473">沉淀效果：</text>
+  <text class="sub" x="520" y="473">经验不再只存在人的脑子里，而是变成 Agent 可复用的企业资产。</text>
+
+  <rect class="dark" x="58" y="548" width="1164" height="48" rx="14"/>
+  <text class="white" x="92" y="579">一句话：</text>
+  <text class="wsub" x="180" y="579">Resource 提供依据，Prompt 固化流程，Skill 打包交付，Tool 负责执行。</text>
+</svg>

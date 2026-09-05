@@ -1,0 +1,60 @@
+<svg width="1280" height="640" viewBox="0 0 1280 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">第三方 MCP Server 统一出口</title>
+  <desc id="desc">Agent 不直接连接飞书等第三方 MCP Server，而是统一连接 Bear MCP，由 Bear 做凭证托管、工具白名单、权限控制和审计</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}.panel{fill:#fff;stroke:#d8e2ee;stroke-width:1.6}.dark{fill:#172033}.blue{fill:#eff6ff;stroke:#93c5fd}.green{fill:#f0fdf4;stroke:#86efac}.orange{fill:#fff7ed;stroke:#fdba74}.purple{fill:#f5f3ff;stroke:#c4b5fd}.cyan{fill:#ecfeff;stroke:#67e8f9}.red{fill:#fff1f2;stroke:#fda4af}.gray{fill:#f1f5f9;stroke:#cbd5e1}.title{fill:#172033;font:700 28px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.h{fill:#172033;font:700 18px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.sub{fill:#64748b;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.tiny{fill:#64748b;font:12px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.white{fill:#fff;font:700 18px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.wsub{fill:#cbd5e1;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.line{stroke:#94a3b8;stroke-width:2.4;fill:none;marker-end:url(#arrow)}.dash{stroke:#94a3b8;stroke-width:2.1;fill:none;stroke-dasharray:7 6;marker-end:url(#arrow)}.bad{stroke:#fb7185;stroke-width:2.2;fill:none;stroke-dasharray:7 6;marker-end:url(#badArrow)}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/></marker>
+    <marker id="badArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#fb7185"/></marker>
+  </defs>
+
+  <rect class="bg" width="1280" height="640" rx="24"/>
+  <text class="title" x="52" y="62">第三方 MCP Server 也可以纳入 Bear MCP 统一出口</text>
+  <text class="sub" x="52" y="88">Agent 不直接分散连接外部 MCP，而是统一连接 Bear MCP，由平台做权限、凭证、白名单和审计。</text>
+
+  <rect class="dark" x="72" y="246" width="170" height="92" rx="18"/>
+  <text class="white" x="116" y="282">Agent</text>
+  <text class="wsub" x="100" y="310">Codex / Cursor</text>
+
+  <path class="line" d="M242 292 H330"/>
+  <rect class="panel" x="330" y="150" width="342" height="284" rx="24"/>
+  <text class="h" x="382" y="188">Bear MCP 统一出口</text>
+  <text class="sub" x="372" y="216">对 Agent 仍然只暴露 MCP Tools</text>
+  <rect class="blue" x="372" y="252" width="258" height="42" rx="12"/>
+  <text class="tiny" x="424" y="278">Token / 角色权限</text>
+  <rect class="green" x="372" y="308" width="258" height="42" rx="12"/>
+  <text class="tiny" x="418" y="334">第三方工具白名单</text>
+  <rect class="orange" x="372" y="364" width="258" height="42" rx="12"/>
+  <text class="tiny" x="416" y="390">服务端凭证托管</text>
+
+  <path class="line" d="M672 292 H760"/>
+  <rect class="purple" x="760" y="170" width="196" height="94" rx="18"/>
+  <text class="h" x="816" y="206">飞书 MCP</text>
+  <text class="tiny" x="804" y="232">search-doc / fetch-doc</text>
+  <text class="tiny" x="804" y="250">create-doc / comments</text>
+
+  <rect class="cyan" x="760" y="300" width="196" height="74" rx="18"/>
+  <text class="h" x="810" y="332">其他 MCP</text>
+  <text class="tiny" x="804" y="354">企业 SaaS / 开放平台</text>
+
+  <rect class="gray" x="1000" y="170" width="200" height="204" rx="20"/>
+  <text class="h" x="1054" y="208">外部平台</text>
+  <text class="sub" x="1040" y="240">文档系统</text>
+  <text class="sub" x="1040" y="268">协作平台</text>
+  <text class="sub" x="1040" y="296">审批系统</text>
+  <text class="sub" x="1040" y="324">三方服务</text>
+
+  <path class="dash" d="M956 217 H1000"/>
+  <path class="dash" d="M956 337 H1000"/>
+
+  <rect class="red" x="72" y="468" width="530" height="86" rx="18"/>
+  <text class="h" x="104" y="500">如果 Agent 直接连第三方 MCP</text>
+  <text class="sub" x="104" y="526">凭证散落在多个客户端，权限和白名单难统一，调用日志也不一定能回到公司平台。</text>
+
+  <rect class="green" x="650" y="468" width="550" height="86" rx="18"/>
+  <text class="h" x="682" y="500">通过 Bear MCP 统一代理</text>
+  <text class="sub" x="682" y="526">Agent 只接一个企业出口，第三方能力也纳入 Token、角色、白名单和审计治理。</text>
+
+  <path class="bad" d="M158 338 C180 420 232 458 330 492"/>
+</svg>

@@ -1,0 +1,31 @@
+spring:
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/prepay_order_schema.sql,classpath:db/payment_schema.sql,classpath:db/refund_schema.sql
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      password: ${SPRING_DATA_REDIS_PASSWORD:}
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/yanque?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+
+tos:
+  endpoint: ${YQ_TOS_ENDPOINT:tos-cn-shanghai.volces.com}
+  region: ${YQ_TOS_REGION:cn-shanghai}
+  bucket: ${YQ_TOS_BUCKET:14-yanque-admin}
+  access-key: ${YQ_TOS_ACCESS_KEY:}
+  secret-key: ${YQ_TOS_SECRET_KEY:}
+  upload-url-expire-seconds: ${YQ_TOS_UPLOAD_URL_EXPIRE_SECONDS:900}
+  download-url-expire-seconds: ${YQ_TOS_DOWNLOAD_URL_EXPIRE_SECONDS:900}
+
+mybatis:
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: cn.yanque.modules
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

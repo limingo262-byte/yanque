@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yanque.modules.product.mapper.ProductMapper">
+  <resultMap id="ProductItemMap" type="cn.yanque.modules.product.pojo.ProductModels$ProductItem">
+    <id property="id" column="id"/>
+    <result property="courseContent" column="course_content"/>
+    <result property="teachingMode" column="teaching_mode"/>
+    <result property="price" column="price"/>
+    <result property="createdAt" column="created_at"/>
+    <result property="updatedAt" column="updated_at"/>
+  </resultMap>
+
+  <select id="selectPage" resultMap="ProductItemMap">
+    select id, course_content, teaching_mode, price, created_at, updated_at
+    from order_product
+    <where>
+      <if test="req.keyword != null and req.keyword != ''">
+        course_content like concat('%', #{req.keyword}, '%')
+      </if>
+    </where>
+    order by id desc
+  </select>
+
+  <select id="selectById" resultMap="ProductItemMap">
+    select id, course_content, teaching_mode, price, created_at, updated_at
+    from order_product where id = #{id}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    insert into order_product(course_content, teaching_mode, price, created_at, updated_at)
+    values(#{courseContent}, #{teachingMode}, #{price}, now(), now())
+  </insert>
+
+  <update id="update">
+    update order_product
+    set course_content = #{courseContent}, teaching_mode = #{teachingMode},
+        price = #{price}, updated_at = now()
+    where id = #{id}
+  </update>
+
+  <delete id="delete">delete from order_product where id = #{id}</delete>
+
+  <select id="countReferences" resultType="int">
+    select
+      (select count(1) from prepay_order where product_id = #{id}) +
+      (select count(1) from order_payment where product_id = cast(#{id} as char)) +
+      (select count(1) from student_product where product_id = cast(#{id} as char))
+  </select>
+</mapper>

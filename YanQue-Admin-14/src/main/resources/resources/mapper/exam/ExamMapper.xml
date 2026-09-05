@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yanque.modules.exam.mapper.ExamMapper">
+  <resultMap id="ExamItemMap" type="cn.yanque.modules.exam.pojo.ExamModels$ExamItem">
+    <id property="id" column="id"/>
+    <result property="paperId" column="paper_id"/>
+    <result property="paperName" column="paper_name"/>
+    <result property="classId" column="class_id"/>
+    <result property="classPeriod" column="class_period"/>
+    <result property="startTime" column="start_time"/>
+    <result property="endTime" column="end_time"/>
+    <result property="durationMinutes" column="duration_minutes"/>
+    <result property="invigilatorUserId" column="invigilator_user_id"/>
+    <result property="invigilatorName" column="invigilator_name"/>
+    <result property="answerVisible" column="answer_visible"/>
+    <result property="createdAt" column="created_at"/>
+    <result property="updatedAt" column="updated_at"/>
+  </resultMap>
+
+  <sql id="SelectWithNames">
+    select e.id, e.paper_id, p.paper_name, e.class_id, c.class_period,
+           e.start_time, e.end_time, e.duration_minutes, e.invigilator_user_id,
+           coalesce(nullif(u.real_name, ''), nullif(u.nickname, ''), u.username) invigilator_name,
+           e.answer_visible, e.created_at, e.updated_at
+    from exam e
+    inner join exam_paper p on p.id = e.paper_id
+    inner join sys_class c on c.id = e.class_id
+    inner join sys_user u on u.id = cast(e.invigilator_user_id as unsigned)
+  </sql>
+
+  <select id="selectPage" resultMap="ExamItemMap">
+    <include refid="SelectWithNames"/>
+    <where>
+      <if test="req.paperId != null">and e.paper_id = #{req.paperId}</if>
+      <if test="req.classId != null">and e.class_id = #{req.classId}</if>
+      <if test="req.invigilatorUserId != null">and e.invigilator_user_id = #{req.invigilatorUserId}</if>
+    </where>
+    order by e.id desc
+  </select>
+
+  <select id="selectById" resultMap="ExamItemMap">
+    <include refid="SelectWithNames"/>
+    where e.id = #{id}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    insert into exam(paper_id, class_id, start_time, end_time, duration_minutes,
+                     invigilator_user_id, answer_visible, created_at, updated_at)
+    values(#{paperId}, #{classId}, #{startTime}, #{endTime}, #{durationMinutes},
+           #{invigilatorUserId}, 0, now(), now())
+  </insert>
+
+  <update id="update">
+    update exam set paper_id=#{paperId}, class_id=#{classId}, start_time=#{startTime},
+      end_time=#{endTime}, duration_minutes=#{durationMinutes},
+      invigilator_user_id=#{invigilatorUserId}, updated_at=now()
+    where id=#{id}
+  </update>
+  <update id="updateAnswerVisible">
+    update exam set answer_visible=#{answerVisible}, updated_at=now() where id=#{id}
+  </update>
+  <delete id="delete">delete from exam where id=#{id}</delete>
+
+  <select id="countPaper" resultType="int">
+    select count(1) from exam_paper p where p.id=#{paperId}
+      and exists(select 1 from exam_paper_question pq where pq.paper_id=p.id)
+  </select>
+  <select id="countClass" resultType="int">select count(1) from sys_class where id=#{classId}</select>
+  <select id="countActiveTeacher" resultType="int">
+    select count(1) from sys_user u
+    inner join sys_user_role ur on ur.user_id=u.id
+    inner join sys_role r on r.id=ur.role_id
+    where u.id=#{userId} and u.status='ACTIVE' and r.status='ACTIVE' and r.role_code='TEACHER'
+  </select>
+  <select id="countRecords" resultType="int">select count(1) from student_exam_record where exam_id=#{examId}</select>
+  <select id="countClassConflict" resultType="int">
+    select count(1) from exam
+    where class_id=#{classId} and start_time &lt; #{endTime} and end_time &gt; #{startTime}
+    <if test="excludeId != null">and id != #{excludeId}</if>
+  </select>
+  <select id="countTeacherConflict" resultType="int">
+    select count(1) from exam
+    where invigilator_user_id=#{userId} and start_time &lt; #{endTime} and end_time &gt; #{startTime}
+    <if test="excludeId != null">and id != #{excludeId}</if>
+  </select>
+</mapper>

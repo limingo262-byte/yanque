@@ -1,0 +1,8 @@
+.venv/
+.uv-cache*/
+.git/
+test/
+*.log
+*.err
+*.out
+.env

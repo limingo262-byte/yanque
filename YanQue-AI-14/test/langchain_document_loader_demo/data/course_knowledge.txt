@@ -1,0 +1,11 @@
+YanQue AI 课程知识库样例
+
+RAG 是 Retrieval-Augmented Generation 的缩写，中文通常叫检索增强生成。
+
+在学生端 AI 问答里，RAG 的基本思路是先从课程资料、制度文档或项目知识库中检索相关内容，再把这些内容和学生问题一起交给大模型。
+
+Document Loader 负责把 TXT、PDF、网页等资料读取成统一的 Document 对象。
+
+Text Splitter 负责把较长的 Document 切分成更小的片段，方便后续向量化、入库和检索。
+
+如果不做切分，长文档里的关键信息可能会被大量无关内容淹没，检索效果也会变差。

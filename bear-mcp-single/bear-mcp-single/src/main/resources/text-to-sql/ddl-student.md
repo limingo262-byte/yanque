@@ -1,0 +1,1 @@
+{"table_name":"student","description":"学生基础信息","columns":[{"name":"id","type":"BIGINT","description":"主键"},{"name":"name","type":"VARCHAR","description":"学生姓名"},{"name":"class_id","type":"BIGINT","description":"所属班级ID"}],"queryable_columns":["id","name","class_id"]}

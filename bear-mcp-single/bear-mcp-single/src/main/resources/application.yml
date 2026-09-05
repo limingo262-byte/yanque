@@ -1,0 +1,67 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: bear-mcp-single
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/bear_mcp?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: never
+  ai:
+    mcp:
+      server:
+        version: 0.1.0
+        protocol: STREAMABLE
+
+mybatis:
+  mapper-locations: classpath*:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
+logging:
+  level:
+    root: INFO
+    com.bear.mcp.single: DEBUG
+    com.bear.mcp.single.core.mapper: WARN
+    org.mybatis: WARN
+    org.springframework.ai.mcp: INFO
+
+bear:
+  admin:
+    jwt-secret: ${BEAR_ADMIN_JWT_SECRET:}
+    jwt-expire-seconds: 7200
+  mcp:
+    demo-token: ${BEAR_MCP_DEMO_TOKEN:}
+  storage:
+    tos:
+      endpoint: ${BEAR_TOS_ENDPOINT:tos-cn-beijing.volces.com}
+      region: ${BEAR_TOS_REGION:cn-beijing}
+      bucket: ${BEAR_TOS_BUCKET:mcp-zxh}
+      access-key: ${BEAR_TOS_ACCESS_KEY:}
+      secret-key: ${BEAR_TOS_SECRET_KEY:}
+      upload-expire-seconds: ${BEAR_TOS_UPLOAD_EXPIRE_SECONDS:600}
+
+feishu:
+  app-id: ${FEISHU_APP_ID:}
+  app-secret: ${FEISHU_APP_SECRET:}
+  token:
+    tenant-url: ${FEISHU_TENANT_TOKEN_URL:https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal}
+  mcp:
+    url: ${FEISHU_MCP_URL:https://mcp.feishu.cn/mcp}
+    # TAT 表示 Bear 用应用身份调用飞书 MCP。UAT 需要额外接用户 OAuth 授权流程。
+    credential-type: ${FEISHU_MCP_CREDENTIAL_TYPE:TAT}
+
+tos:
+  endpoint: ${YQ_TOS_ENDPOINT:tos-cn-shanghai.volces.com}
+  region: ${YQ_TOS_REGION:cn-shanghai}
+  bucket: ${YQ_TOS_BUCKET:14-yanque-admin}
+  access-key: ${YQ_TOS_ACCESS_KEY:}
+  secret-key: ${YQ_TOS_SECRET_KEY:}
+  upload-url-expire-seconds: ${YQ_TOS_UPLOAD_URL_EXPIRE_SECONDS:900}
+  download-url-expire-seconds: ${YQ_TOS_DOWNLOAD_URL_EXPIRE_SECONDS:900}

@@ -1,0 +1,133 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: yanque-mysql
+    restart: unless-stopped
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d:ro
+    networks: [yanque-net]
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  redis:
+    image: redis:7-alpine
+    container_name: yanque-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:?set REDIS_PASSWORD}"]
+    volumes:
+      - ./data/redis:/data
+    networks: [yanque-net]
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" ping | grep PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  yanque-admin:
+    build:
+      context: ../YanQue-Admin-14
+      dockerfile: Dockerfile
+    image: yanque-admin:${IMAGE_TAG:-local}
+    container_name: yanque-admin
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/yanque?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD}
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD:?set REDIS_PASSWORD}
+      YANQUE_AI_BASE_URL: http://yanque-ai:8002
+    depends_on:
+      mysql: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      yanque-ai: { condition: service_started }
+    networks: [yanque-net]
+
+  yanque-ai:
+    build:
+      context: ../YanQue-AI-14
+      dockerfile: Dockerfile
+    image: yanque-ai:${IMAGE_TAG:-local}
+    container_name: yanque-ai
+    restart: unless-stopped
+    environment:
+      YANQUE_AI_HOST: 0.0.0.0
+      YANQUE_AI_PORT: 8002
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:?set DASHSCOPE_API_KEY}
+      BAILIAN_MODEL: ${BAILIAN_MODEL:-qwen3.7-plus}
+      YANQUE_ADMIN_BASE_URL: http://yanque-admin:8080/yq-admin
+      BEAR_MCP_URL: http://bear-mcp:8090/mcp
+      BEAR_MCP_TOKEN: ${BEAR_MCP_TOKEN:?set BEAR_MCP_TOKEN}
+      MILVUS_URI: ${MILVUS_URI:-http://host.docker.internal:19530}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks: [yanque-net]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8002/health | grep -q ."]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  bear-mcp:
+    build:
+      context: ../bear-mcp-single/bear-mcp-single
+      dockerfile: Dockerfile
+    image: bear-mcp:${IMAGE_TAG:-local}
+    container_name: bear-mcp
+    restart: unless-stopped
+    environment:
+      SERVER_PORT: 8090
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/bear_mcp?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD}
+      BEAR_ADMIN_JWT_SECRET: ${BEAR_ADMIN_JWT_SECRET:?set BEAR_ADMIN_JWT_SECRET}
+      BEAR_MCP_DEMO_TOKEN: ${BEAR_MCP_TOKEN:?set BEAR_MCP_TOKEN}
+    depends_on:
+      mysql: { condition: service_healthy }
+    networks: [yanque-net]
+
+  admin-web:
+    build:
+      context: ../YanQue-Admin-Web-14
+      dockerfile: Dockerfile
+    image: yanque-admin-web:${IMAGE_TAG:-local}
+    container_name: yanque-admin-web
+    restart: unless-stopped
+    ports: ["80:80"]
+    depends_on: [yanque-admin]
+    networks: [yanque-net]
+
+  student-web:
+    build:
+      context: ../YanQue-Student-Web-14
+      dockerfile: Dockerfile
+    image: yanque-student-web:${IMAGE_TAG:-local}
+    container_name: yanque-student-web
+    restart: unless-stopped
+    ports: ["81:80"]
+    depends_on: [yanque-admin]
+    networks: [yanque-net]
+
+  bear-mcp-web:
+    build:
+      context: ../bear-mcp-single/bear-mcp-single/admin-web
+      dockerfile: Dockerfile
+    image: bear-mcp-web:${IMAGE_TAG:-local}
+    container_name: bear-mcp-web
+    restart: unless-stopped
+    ports: ["82:80"]
+    depends_on: [bear-mcp]
+    networks: [yanque-net]
+
+networks:
+  yanque-net:
+    name: yanque-net

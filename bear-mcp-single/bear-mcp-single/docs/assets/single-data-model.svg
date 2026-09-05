@@ -1,0 +1,52 @@
+<svg width="1280" height="760" viewBox="0 0 1280 760" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">核心数据模型</title>
+  <desc id="desc">展示企业 MCP Server 中用户角色 Token 选择、动态工具、请求配置、Prompt、Resource、Skill 和审计日志的核心表关系</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}.card{fill:#fff;stroke:#d8e2ee;stroke-width:1.5}.dark{fill:#172033}.blue{fill:#eff6ff;stroke:#93c5fd}.green{fill:#f0fdf4;stroke:#86efac}.orange{fill:#fff7ed;stroke:#fdba74}.purple{fill:#f5f3ff;stroke:#c4b5fd}.cyan{fill:#ecfeff;stroke:#67e8f9}.red{fill:#fef2f2;stroke:#fca5a5}.title{fill:#172033;font:700 28px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.h{fill:#172033;font:700 16px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.sub{fill:#64748b;font:13px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.white{fill:#fff;font:700 16px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.line{stroke:#94a3b8;stroke-width:2.1;fill:none;marker-end:url(#arrow)}.dash{stroke:#94a3b8;stroke-width:2;fill:none;stroke-dasharray:7 6;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/></marker>
+  </defs>
+  <rect class="bg" width="1280" height="760" rx="24"/>
+  <text class="title" x="46" y="58">核心表：18 张表支撑 MCP 四类资产和审计</text>
+  <text class="sub" x="46" y="84">图里保留运行链路最关键的表，迁移脚本在 bear-mcp-single/docs/mysql-*.sql。</text>
+
+  <rect class="dark" x="72" y="168" width="150" height="54" rx="12"/><text class="white" x="112" y="201">mcp_user</text>
+  <path class="line" d="M222 195 H292"/>
+  <rect class="blue" x="292" y="134" width="174" height="54" rx="12"/><text class="h" x="330" y="167">mcp_user_role</text>
+  <rect class="blue" x="292" y="218" width="174" height="54" rx="12"/><text class="h" x="330" y="251">mcp_user_token</text>
+  <path class="line" d="M466 161 H546"/>
+  <rect class="green" x="546" y="134" width="150" height="54" rx="12"/><text class="h" x="590" y="167">mcp_role</text>
+
+  <path class="line" d="M696 161 H768"/>
+  <rect class="green" x="768" y="86" width="176" height="50" rx="12"/><text class="h" x="810" y="117">mcp_role_tool</text>
+  <rect class="green" x="768" y="152" width="176" height="50" rx="12"/><text class="h" x="802" y="183">mcp_role_prompt</text>
+  <rect class="green" x="768" y="218" width="176" height="50" rx="12"/><text class="h" x="798" y="249">mcp_role_resource</text>
+
+  <path class="line" d="M466 245 H548"/>
+  <rect class="orange" x="548" y="300" width="210" height="50" rx="12"/><text class="h" x="584" y="331">tool_selection</text>
+  <rect class="orange" x="548" y="366" width="210" height="50" rx="12"/><text class="h" x="578" y="397">prompt_selection</text>
+  <rect class="orange" x="548" y="432" width="210" height="50" rx="12"/><text class="h" x="572" y="463">resource_selection</text>
+
+  <path class="dash" d="M653 300 V246 H944"/>
+  <rect class="purple" x="994" y="300" width="194" height="56" rx="12"/><text class="h" x="1030" y="334">mcp_dynamic_tool</text>
+  <rect class="purple" x="994" y="376" width="194" height="56" rx="12"/><text class="h" x="1020" y="410">mcp_request_config</text>
+  <rect class="purple" x="994" y="452" width="194" height="56" rx="12"/><text class="h" x="1030" y="486">mcp_data_source</text>
+  <path class="line" d="M758 325 H994"/>
+  <path class="dash" d="M1091 356 V376"/>
+  <path class="dash" d="M1091 356 C1138 386 1148 430 1091 452"/>
+
+  <rect class="cyan" x="72" y="520" width="194" height="56" rx="12"/><text class="h" x="106" y="554">mcp_prompt_template</text>
+  <rect class="cyan" x="306" y="520" width="194" height="56" rx="12"/><text class="h" x="348" y="554">mcp_resource</text>
+  <rect class="cyan" x="540" y="520" width="194" height="56" rx="12"/><text class="h" x="582" y="554">mcp_skill</text>
+  <rect class="red" x="774" y="520" width="194" height="56" rx="12"/><text class="h" x="812" y="554">mcp_audit_log</text>
+  <rect class="red" x="1008" y="520" width="194" height="56" rx="12"/><text class="h" x="1034" y="554">mcp_community_like</text>
+
+  <path class="dash" d="M653 416 C520 500 384 500 169 520"/>
+  <path class="dash" d="M653 482 C580 510 520 526 403 520"/>
+  <path class="dash" d="M1091 508 C1020 534 980 548 968 548"/>
+
+  <rect class="card" x="72" y="640" width="1130" height="58" rx="16"/>
+  <text class="h" x="104" y="675">读图：</text>
+  <text class="sub" x="166" y="675">角色表给权限上限，selection 表给当前 Token 装备，资产表给运行内容，audit 表沉淀每次调用。</text>
+</svg>

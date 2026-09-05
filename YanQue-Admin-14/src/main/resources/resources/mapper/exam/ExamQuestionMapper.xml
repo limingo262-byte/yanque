@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yanque.modules.exam.mapper.ExamQuestionMapper">
+  <resultMap id="QuestionMap" type="cn.yanque.modules.exam.pojo.ExamQuestionModels$Question">
+    <id property="id" column="id"/><result property="questionType" column="question_type"/><result property="questionContent" column="question_content"/>
+    <result property="answerContent" column="answer_content"/><result property="analysisContent" column="analysis_content"/><result property="difficulty" column="difficulty"/>
+    <result property="status" column="status"/><result property="courseNames" column="course_names"/><result property="courseStageNames" column="course_stage_names"/>
+    <result property="createdAt" column="created_at"/><result property="updatedAt" column="updated_at"/>
+  </resultMap>
+  <resultMap id="OptionMap" type="cn.yanque.modules.exam.pojo.ExamQuestionModels$Option">
+    <id property="id" column="id"/><result property="questionId" column="question_id"/><result property="optionKey" column="option_key"/><result property="optionContent" column="option_content"/><result property="sortOrder" column="sort_order"/>
+  </resultMap>
+  <select id="selectPage" resultMap="QuestionMap">
+    select q.id,q.question_type,cast(q.question_content as char) question_content,
+      cast(q.answer_content as char) answer_content,cast(q.analysis_content as char) analysis_content,
+      q.difficulty,q.status,q.created_at,q.updated_at,
+      group_concat(distinct c.course_name order by c.id separator '、') course_names,
+      group_concat(distinct concat(c.course_name,' / ',qc.stage_name) order by c.id,qc.stage_name separator '、') course_stage_names
+    from exam_question q left join exam_question_course qc on qc.question_id=q.id left join sys_course c on c.id=qc.course_id
+    <where>
+      <if test="req.questionType != null">and q.question_type=#{req.questionType}</if>
+      <if test="req.courseId != null">and exists(select 1 from exam_question_course x where x.question_id=q.id and x.course_id=#{req.courseId})</if>
+      <if test="req.difficulty != null">and q.difficulty=#{req.difficulty}</if><if test="req.status != null">and q.status=#{req.status}</if>
+      <if test="req.keyword != null and req.keyword != ''">and (q.question_content like concat('%',#{req.keyword},'%') or q.answer_content like concat('%',#{req.keyword},'%'))</if>
+    </where> group by q.id order by q.id desc
+  </select>
+  <select id="selectById" resultMap="QuestionMap">select q.id,q.question_type,cast(q.question_content as char) question_content,cast(q.answer_content as char) answer_content,cast(q.analysis_content as char) analysis_content,q.difficulty,q.status,q.created_at,q.updated_at,group_concat(distinct c.course_name order by c.id separator '、') course_names,group_concat(distinct concat(c.course_name,' / ',qc.stage_name) order by c.id,qc.stage_name separator '、') course_stage_names from exam_question q left join exam_question_course qc on qc.question_id=q.id left join sys_course c on c.id=qc.course_id where q.id=#{id} group by q.id</select>
+  <select id="selectOptions" resultMap="OptionMap">select id,question_id,option_key,cast(option_content as char) option_content,sort_order,created_at,updated_at from exam_question_option where question_id=#{questionId} order by sort_order,id</select>
+  <select id="selectCourseStages" resultType="cn.yanque.modules.exam.pojo.ExamQuestionModels$CourseStage">select course_id courseId,stage_name stageName from exam_question_course where question_id=#{questionId} order by course_id,stage_name</select>
+  <select id="selectCourseStagesByQuestionIds" resultType="cn.yanque.modules.exam.pojo.ExamQuestionModels$CourseStage">
+    select question_id questionId, course_id courseId, stage_name stageName
+    from exam_question_course
+    where question_id in
+    <foreach collection="questionIds" item="id" open="(" separator="," close=")">#{id}</foreach>
+    order by question_id, course_id, stage_name
+  </select>
+  <insert id="insertQuestion" useGeneratedKeys="true" keyProperty="id">insert into exam_question(question_type,question_content,answer_content,analysis_content,difficulty,status,created_at,updated_at) values(#{questionType},#{questionContent},#{answerContent},#{analysisContent},#{difficulty},#{status},now(),now())</insert>
+  <update id="updateQuestion">update exam_question set question_type=#{questionType},question_content=#{questionContent},answer_content=#{answerContent},analysis_content=#{analysisContent},difficulty=#{difficulty},status=#{status},updated_at=now() where id=#{id}</update>
+  <insert id="insertOption">insert into exam_question_option(question_id,option_key,option_content,sort_order,created_at,updated_at) values(#{questionId},#{item.optionKey},#{item.optionContent},#{item.sortOrder},now(),now())</insert>
+  <insert id="insertCourse">insert into exam_question_course(question_id,course_id,stage_name,created_at) values(#{questionId},#{item.courseId},#{item.stageName},now())</insert>
+  <delete id="deleteOptions">delete from exam_question_option where question_id=#{questionId}</delete><delete id="deleteCourses">delete from exam_question_course where question_id=#{questionId}</delete><delete id="deleteQuestion">delete from exam_question where id=#{id}</delete>
+  <update id="updateStatus">update exam_question set status=#{status},updated_at=now() where id=#{id}</update>
+  <select id="countCourseStage" resultType="int">select count(1) from sys_course_detail where course_id=#{courseId} and stage_name=#{stageName}</select>
+  <select id="countPaperUsage" resultType="int">select count(1) from exam_paper_question where question_id=#{questionId}</select>
+</mapper>

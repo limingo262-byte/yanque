@@ -1,0 +1,69 @@
+<svg width="1280" height="760" viewBox="0 0 1280 760" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">动态工具 Groovy 执行链路</title>
+  <desc id="desc">展示动态工具从 mcp_dynamic_tool 读取脚本，经 GroovyScriptEngine 安全校验、线程池执行、runRequest 和 runSql 白名单访问，再写审计日志</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}.card{fill:#fff;stroke:#d8e2ee;stroke-width:1.5}.dark{fill:#172033}.blue{fill:#eff6ff;stroke:#93c5fd}.green{fill:#f0fdf4;stroke:#86efac}.orange{fill:#fff7ed;stroke:#fdba74}.purple{fill:#f5f3ff;stroke:#c4b5fd}.cyan{fill:#ecfeff;stroke:#67e8f9}.red{fill:#fef2f2;stroke:#fca5a5}.title{fill:#172033;font:700 28px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.h{fill:#172033;font:700 17px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.sub{fill:#64748b;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.white{fill:#fff;font:700 17px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.wsub{fill:#cbd5e1;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.line{stroke:#94a3b8;stroke-width:2.4;fill:none;marker-end:url(#arrow)}.dash{stroke:#94a3b8;stroke-width:2.1;fill:none;stroke-dasharray:7 6;marker-end:url(#arrow)}.tag{fill:#475569;font:13px Arial,"PingFang SC","Microsoft YaHei",sans-serif}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/></marker>
+  </defs>
+  <rect class="bg" width="1280" height="760" rx="24"/>
+  <text class="title" x="46" y="58">动态工具执行：工具即数据，执行逻辑是受控 Groovy 脚本</text>
+  <text class="sub" x="46" y="84">动态工具从 mcp_dynamic_tool 读取，脚本可通过 runRequest/runSql 访问白名单企业能力。</text>
+
+  <rect class="dark" x="64" y="150" width="166" height="82" rx="15"/>
+  <text class="white" x="102" y="184">动态工具</text>
+  <text class="wsub" x="96" y="210">toolName + args</text>
+  <path class="line" d="M230 191 H290"/>
+
+  <rect class="blue" x="290" y="126" width="218" height="130" rx="16"/>
+  <text class="h" x="330" y="162">DynamicToolService</text>
+  <text class="sub" x="330" y="192">findEnabledByName</text>
+  <text class="sub" x="330" y="216">权限 + Token 选择</text>
+  <path class="line" d="M508 191 H568"/>
+
+  <rect class="green" x="568" y="126" width="218" height="130" rx="16"/>
+  <text class="h" x="616" y="162">mcp_dynamic_tool</text>
+  <text class="sub" x="614" y="192">description / schema</text>
+  <text class="sub" x="614" y="216">script / linked keys</text>
+  <path class="line" d="M786 191 H846"/>
+
+  <rect class="orange" x="846" y="126" width="218" height="130" rx="16"/>
+  <text class="h" x="890" y="162">ScriptContext</text>
+  <text class="sub" x="890" y="192">params / userId</text>
+  <text class="sub" x="890" y="216">requestKeys / dsIds</text>
+
+  <path class="line" d="M955 256 V330"/>
+  <rect class="purple" x="756" y="330" width="398" height="166" rx="18"/>
+  <text class="h" x="820" y="364">GroovyScriptEngine</text>
+  <rect class="card" x="792" y="386" width="150" height="52" rx="11"/><text class="h" x="828" y="419">安全校验</text>
+  <rect class="card" x="968" y="386" width="150" height="52" rx="11"/><text class="h" x="1005" y="419">Binding</text>
+  <rect class="card" x="792" y="450" width="150" height="52" rx="11"/><text class="h" x="822" y="483">8 线程池</text>
+  <rect class="card" x="968" y="450" width="150" height="52" rx="11"/><text class="h" x="1006" y="483">30s 超时</text>
+
+  <path class="dash" d="M866 496 V586 H528"/>
+  <path class="dash" d="M1043 496 V586 H724"/>
+
+  <rect class="cyan" x="330" y="546" width="198" height="116" rx="16"/>
+  <text class="h" x="374" y="582">runRequest</text>
+  <text class="sub" x="368" y="612">只允许 linked keys</text>
+  <text class="sub" x="368" y="636">执行 HTTP 请求配置</text>
+
+  <rect class="cyan" x="724" y="546" width="198" height="116" rx="16"/>
+  <text class="h" x="778" y="582">runSql</text>
+  <text class="sub" x="762" y="612">只允许 linked ds</text>
+  <text class="sub" x="762" y="636">只读 SELECT 查询</text>
+
+  <rect class="red" x="984" y="546" width="198" height="116" rx="16"/>
+  <text class="h" x="1028" y="582">审计日志</text>
+  <text class="sub" x="1022" y="612">成功 / 失败都记录</text>
+  <text class="sub" x="1022" y="636">mcp_audit_log</text>
+  <path class="line" d="M955 496 C1016 514 1046 530 1083 546"/>
+
+  <rect class="card" x="64" y="330" width="520" height="166" rx="18"/>
+  <text class="h" x="104" y="365">脚本可见变量</text>
+  <text class="sub" x="104" y="398">params：工具入参</text>
+  <text class="sub" x="104" y="425">userId / userName / toolName：当前调用上下文</text>
+  <text class="sub" x="104" y="452">runRequest：请求配置白名单入口</text>
+  <text class="sub" x="104" y="479">runSql：数据源只读查询白名单入口</text>
+</svg>

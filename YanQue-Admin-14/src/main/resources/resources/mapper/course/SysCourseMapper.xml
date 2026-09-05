@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yanque.modules.course.mapper.SysCourseMapper">
+
+    <resultMap id="SysCourseMap" type="cn.yanque.modules.course.pojo.entity.SysCourseEntity">
+        <id property="id" column="id"/>
+        <result property="courseName" column="course_name"/>
+        <result property="courseDays" column="course_days"/>
+        <result property="teachingMode" column="teaching_mode"/>
+        <result property="materialPath" column="material_path"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <!--
+      线下课课程天数实时取详情最大 day_number；
+      若尚无详情天数，则回退主表 course_days（新建时的计划天数）。
+      线上课仍使用主表 course_days。
+    -->
+    <sql id="BaseColumns">
+        id,
+        course_name,
+        case
+            when teaching_mode = 'OFFLINE' then coalesce(
+                (select max(d.day_number) from sys_course_detail d where d.course_id = sys_course.id),
+                course_days
+            )
+            else course_days
+        end as course_days,
+        teaching_mode,
+        material_path,
+        created_at,
+        updated_at
+    </sql>
+
+    <select id="selectById" resultMap="SysCourseMap">
+        select <include refid="BaseColumns"/> from sys_course where id = #{id}
+    </select>
+
+    <select id="selectByCourseName" resultMap="SysCourseMap">
+        select <include refid="BaseColumns"/> from sys_course where course_name = #{courseName}
+    </select>
+
+    <select id="selectPage" resultMap="SysCourseMap">
+        select <include refid="BaseColumns"/> from sys_course
+        <where>
+            <if test="keyword != null and keyword != ''">
+                and (
+                    course_name like concat('%', #{keyword}, '%')
+                    or material_path like concat('%', #{keyword}, '%')
+                )
+            </if>
+        </where>
+        order by id desc
+    </select>
+
+    <insert id="insert" parameterType="cn.yanque.modules.course.pojo.entity.SysCourseEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into sys_course
+        (course_name, course_days, teaching_mode, material_path, created_at, updated_at)
+        values
+        (#{courseName}, #{courseDays}, #{teachingMode}, #{materialPath}, now(), now())
+    </insert>
+
+    <update id="updateById" parameterType="cn.yanque.modules.course.pojo.entity.SysCourseEntity">
+        update sys_course
+        set course_name = #{courseName},
+            course_days = #{courseDays},
+            teaching_mode = #{teachingMode},
+            material_path = #{materialPath},
+            updated_at = now()
+        where id = #{id}
+    </update>
+
+    <update id="updateCourseDays">
+        update sys_course
+        set course_days = #{courseDays},
+            updated_at = now()
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from sys_course where id = #{id}
+    </delete>
+</mapper>

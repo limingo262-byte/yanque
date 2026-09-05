@@ -1,0 +1,67 @@
+<svg width="1280" height="700" viewBox="0 0 1280 700" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">代码包分层与核心链路</title>
+  <desc id="desc">展示企业 MCP Server 的代码分层：启动入口、MCP 网关、核心能力、数据访问和外部依赖，以及管理端和创作空间</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}.panel{fill:#fff;stroke:#d8e2ee;stroke-width:1.6}.dark{fill:#172033}.blue{fill:#eff6ff;stroke:#93c5fd}.green{fill:#f0fdf4;stroke:#86efac}.orange{fill:#fff7ed;stroke:#fdba74}.purple{fill:#f5f3ff;stroke:#c4b5fd}.cyan{fill:#ecfeff;stroke:#67e8f9}.gray{fill:#f1f5f9;stroke:#cbd5e1}.title{fill:#172033;font:700 28px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.h{fill:#172033;font:700 18px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.sub{fill:#64748b;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.tiny{fill:#64748b;font:12px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.white{fill:#fff;font:700 18px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.wsub{fill:#cbd5e1;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.line{stroke:#94a3b8;stroke-width:2.4;fill:none;marker-end:url(#arrow)}.dash{stroke:#94a3b8;stroke-width:2.1;fill:none;stroke-dasharray:7 6;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/></marker>
+  </defs>
+
+  <rect class="bg" width="1280" height="700" rx="24"/>
+  <text class="title" x="52" y="62">代码包分层：从 MCP 请求到企业能力执行</text>
+  <text class="sub" x="52" y="88">讲代码时不要按文件一个个背，而是按请求链路看每层负责什么。</text>
+
+  <rect class="dark" x="80" y="124" width="260" height="72" rx="18"/>
+  <text class="white" x="126" y="154">启动与工具注册</text>
+  <text class="wsub" x="118" y="178">SingleMcpApplication / McpToolsConfig</text>
+
+  <path class="line" d="M340 160 H440"/>
+  <rect class="blue" x="440" y="124" width="350" height="72" rx="18"/>
+  <text class="h" x="542" y="154">gateway</text>
+  <text class="sub" x="500" y="178">/mcp 协议入口、鉴权、改写、短路、审计触发</text>
+
+  <path class="line" d="M790 160 H890"/>
+  <rect class="green" x="890" y="124" width="310" height="72" rx="18"/>
+  <text class="h" x="1012" y="154">core</text>
+  <text class="sub" x="930" y="178">动态工具、Groovy、API、SQL、Prompt、Resource</text>
+
+  <rect class="panel" x="80" y="240" width="1120" height="350" rx="24"/>
+
+  <rect class="blue" x="120" y="286" width="230" height="230" rx="18"/>
+  <text class="h" x="190" y="318">gateway</text>
+  <text class="tiny" x="154" y="354">ApiKeyAuthFilter</text>
+  <text class="tiny" x="154" y="384">McpInitializeCapabilitiesFilter</text>
+  <text class="tiny" x="154" y="414">McpToolsListFilter</text>
+  <text class="tiny" x="154" y="444">McpToolsCallFilter</text>
+  <text class="tiny" x="154" y="474">McpPrompts / ResourcesFilter</text>
+
+  <path class="line" d="M350 400 H430"/>
+  <rect class="green" x="430" y="286" width="330" height="230" rx="18"/>
+  <text class="h" x="568" y="318">core</text>
+  <text class="tiny" x="464" y="354">auth / context / selection</text>
+  <text class="tiny" x="464" y="384">dynamic / groovy</text>
+  <text class="tiny" x="464" y="414">request / datasource</text>
+  <text class="tiny" x="464" y="444">prompt / resource / skill</text>
+  <text class="tiny" x="464" y="474">feishu / audit / tools</text>
+
+  <path class="line" d="M760 400 H840"/>
+  <rect class="orange" x="840" y="286" width="320" height="230" rx="18"/>
+  <text class="h" x="960" y="318">数据和外部系统</text>
+  <text class="tiny" x="876" y="354">mapper / entity：MySQL 表访问</text>
+  <text class="tiny" x="876" y="384">mcp_request_config：API 配置</text>
+  <text class="tiny" x="876" y="414">mcp_data_source：外部数据源</text>
+  <text class="tiny" x="876" y="444">TOS：Resource / Skill 文件</text>
+  <text class="tiny" x="876" y="474">Feishu MCP：第三方能力代理</text>
+
+  <rect class="purple" x="120" y="540" width="230" height="38" rx="12"/>
+  <text class="tiny" x="156" y="564">admin：权限和资产治理</text>
+  <rect class="cyan" x="430" y="540" width="330" height="38" rx="12"/>
+  <text class="tiny" x="500" y="564">share：工具 / Prompt / Resource / Skill 创作</text>
+  <rect class="gray" x="840" y="540" width="320" height="38" rx="12"/>
+  <text class="tiny" x="920" y="564">publicapi：公开 Skill 下载</text>
+
+  <rect class="panel" x="80" y="624" width="1120" height="44" rx="14"/>
+  <text class="h" x="114" y="652">读图重点：</text>
+  <text class="sub" x="216" y="652">gateway 处理 MCP 协议层，core 承载企业能力层，mapper/entity/storage/feishu 连接真实数据和外部平台。</text>
+</svg>

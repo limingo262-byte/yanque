@@ -1,0 +1,54 @@
+<svg width="1280" height="640" viewBox="0 0 1280 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">MCP 调用审计日志链路</title>
+  <desc id="desc">内置工具、动态工具、Prompt 和 Resource 调用都会记录审计日志，沉淀调用主体、能力名称、请求摘要、响应摘要、状态、错误和耗时</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}.panel{fill:#fff;stroke:#d8e2ee;stroke-width:1.6}.dark{fill:#172033}.blue{fill:#eff6ff;stroke:#93c5fd}.green{fill:#f0fdf4;stroke:#86efac}.orange{fill:#fff7ed;stroke:#fdba74}.purple{fill:#f5f3ff;stroke:#c4b5fd}.cyan{fill:#ecfeff;stroke:#67e8f9}.gray{fill:#f1f5f9;stroke:#cbd5e1}.red{fill:#fff1f2;stroke:#fda4af}.title{fill:#172033;font:700 28px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.h{fill:#172033;font:700 18px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.sub{fill:#64748b;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.tiny{fill:#64748b;font:12px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.white{fill:#fff;font:700 18px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.wsub{fill:#cbd5e1;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.line{stroke:#94a3b8;stroke-width:2.4;fill:none;marker-end:url(#arrow)}.dash{stroke:#94a3b8;stroke-width:2.1;fill:none;stroke-dasharray:7 6;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/></marker>
+  </defs>
+
+  <rect class="bg" width="1280" height="640" rx="24"/>
+  <text class="title" x="52" y="62">审计日志：让 Agent 调用可追踪、可复盘、可治理</text>
+  <text class="sub" x="52" y="88">企业 MCP 不只是让 AI 能调用工具，还要知道谁调用了什么、是否成功、耗时多少、失败原因是什么。</text>
+
+  <rect class="dark" x="68" y="240" width="170" height="94" rx="18"/>
+  <text class="white" x="110" y="278">MCP Client</text>
+  <text class="wsub" x="104" y="306">Agent 发起调用</text>
+
+  <path class="line" d="M238 287 H324"/>
+  <rect class="panel" x="324" y="150" width="290" height="274" rx="22"/>
+  <text class="h" x="370" y="188">协议网关 Filter</text>
+  <text class="sub" x="364" y="216">统一鉴权、分流、短路</text>
+  <rect class="blue" x="360" y="250" width="220" height="44" rx="12"/>
+  <text class="tiny" x="410" y="278">内置 tools/call</text>
+  <rect class="green" x="360" y="306" width="220" height="44" rx="12"/>
+  <text class="tiny" x="410" y="334">动态 tools/call</text>
+  <rect class="purple" x="360" y="362" width="220" height="44" rx="12"/>
+  <text class="tiny" x="400" y="390">prompts / resources</text>
+
+  <path class="line" d="M614 287 H700"/>
+  <rect class="orange" x="700" y="186" width="240" height="202" rx="20"/>
+  <text class="h" x="756" y="224">AuditLogService</text>
+  <text class="sub" x="742" y="252">统一写审计日志</text>
+  <text class="tiny" x="736" y="288">请求摘要截断</text>
+  <text class="tiny" x="736" y="316">响应摘要截断</text>
+  <text class="tiny" x="736" y="344">异常信息截断</text>
+
+  <path class="line" d="M940 287 H1018"/>
+  <rect class="cyan" x="1018" y="186" width="190" height="202" rx="20"/>
+  <text class="h" x="1052" y="224">mcp_audit_log</text>
+  <text class="tiny" x="1050" y="258">create_time</text>
+  <text class="tiny" x="1050" y="282">user_id / user_name</text>
+  <text class="tiny" x="1050" y="306">tool_name</text>
+  <text class="tiny" x="1050" y="330">status / duration</text>
+  <text class="tiny" x="1050" y="354">request / response</text>
+
+  <rect class="panel" x="68" y="468" width="1140" height="92" rx="18"/>
+  <text class="h" x="102" y="502">治理价值</text>
+  <text class="sub" x="102" y="528">问题追踪：失败时能看到错误信息和耗时；安全复盘：能看到调用人和能力名称；运营分析：能统计哪些工具被频繁使用。</text>
+
+  <path class="dash" d="M820 388 C840 450 890 490 1018 510"/>
+  <rect class="red" x="700" y="416" width="240" height="44" rx="12"/>
+  <text class="tiny" x="748" y="444">失败也要落审计</text>
+</svg>

@@ -1,0 +1,31 @@
+
+# 如果我们要连接的是本地的Redis 那么不需要做配置 默认就是本地的
+spring:
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      password: ${SPRING_DATA_REDIS_PASSWORD:}   # 没密码可不写
+      database: 4
+
+
+  # MySQL的配置
+  datasource:
+    url: jdbc:mysql://localhost:3306/yanque?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+
+tos:
+  endpoint: ${YQ_TOS_ENDPOINT:tos-cn-shanghai.volces.com}
+  region: ${YQ_TOS_REGION:cn-shanghai}
+  bucket: ${YQ_TOS_BUCKET:yanque-test}
+  access-key: ${YQ_TOS_ACCESS_KEY:}
+  secret-key: ${YQ_TOS_SECRET_KEY:}
+  upload-url-expire-seconds: ${YQ_TOS_UPLOAD_URL_EXPIRE_SECONDS:900}
+  download-url-expire-seconds: ${YQ_TOS_DOWNLOAD_URL_EXPIRE_SECONDS:900}
+
+yanque-ai:
+  # Java 后端转发 Text-to-SQL 时调用的 Python 服务地址。
+  # 本地 Python 服务默认启动在 8002；可通过环境变量覆盖。
+  base-url: ${YANQUE_AI_BASE_URL:http://127.0.0.1:8002}

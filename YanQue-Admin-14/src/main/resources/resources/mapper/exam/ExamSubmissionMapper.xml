@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yanque.modules.exam.mapper.ExamSubmissionMapper">
+  <resultMap id="QuestionItemMap" type="cn.yanque.modules.exam.pojo.ExamSubmissionModels$QuestionItem">
+    <id property="answerId" column="answer_id"/><result property="questionId" column="question_id"/>
+    <result property="questionContent" column="question_content" javaType="java.lang.String"/>
+    <result property="questionType" column="question_type"/><result property="questionScore" column="question_score"/>
+    <result property="answerContent" column="answer_content" javaType="java.lang.String"/>
+    <result property="correctAnswer" column="correct_answer" javaType="java.lang.String"/>
+    <result property="analysisContent" column="analysis_content" javaType="java.lang.String"/>
+    <result property="correct" column="correct"/><result property="score" column="score"/>
+  </resultMap>
+  <resultMap id="OptionItemMap" type="cn.yanque.modules.exam.pojo.ExamSubmissionModels$OptionItem">
+    <id property="id" column="id"/><result property="questionId" column="question_id"/>
+    <result property="optionKey" column="option_key"/><result property="optionContent" column="option_content" javaType="java.lang.String"/>
+  </resultMap>
+  <select id="countExam" resultType="int">select count(1) from exam where id=#{examId}</select>
+  <select id="selectPage" resultType="cn.yanque.modules.exam.pojo.ExamSubmissionModels$SubmissionItem">
+    select r.id record_id,e.id exam_id,s.id student_id,s.student_name,s.student_phone,
+      coalesce(r.status,'NOT_STARTED') record_status,r.grading_status,r.score,r.start_time,r.deadline_time,r.submit_time
+    from exam e inner join student s on s.class_id=e.class_id and s.status='ACTIVE'
+    left join student_exam_record r on r.exam_id=e.id and r.student_id=s.id
+    where e.id=#{examId}
+    union all
+    select r.id record_id,e.id exam_id,s.id student_id,s.student_name,s.student_phone,
+      r.status record_status,r.grading_status,r.score,r.start_time,r.deadline_time,r.submit_time
+    from exam e inner join student_exam_record r on r.exam_id=e.id
+    inner join student s on s.id=r.student_id
+    where e.id=#{examId} and (s.status!='ACTIVE' or s.class_id is null or s.class_id!=e.class_id)
+    order by submit_time desc,student_id
+  </select>
+  <select id="selectDetail" resultType="cn.yanque.modules.exam.pojo.ExamSubmissionModels$SubmissionDetail">
+    select r.id record_id,r.exam_id,e.paper_id,p.paper_name,c.class_period,p.stage_name,r.student_id,
+      s.student_name,s.student_phone,p.total_score,r.score,r.status record_status,r.grading_status,
+      r.start_time,r.deadline_time,r.submit_time
+    from student_exam_record r inner join exam e on e.id=r.exam_id inner join exam_paper p on p.id=e.paper_id
+    inner join sys_class c on c.id=e.class_id inner join student s on s.id=r.student_id
+    where r.id=#{recordId}
+  </select>
+  <select id="selectQuestions" resultMap="QuestionItemMap">
+    select a.id answer_id,a.question_id,cast(q.question_content as char) question_content,a.question_type,a.question_score,
+      cast(a.answer_content as char) answer_content,cast(q.answer_content as char) correct_answer,
+      cast(q.analysis_content as char) analysis_content,a.correct,a.score
+    from student_exam_answer a inner join exam_question q on q.id=a.question_id
+    where a.record_id=#{recordId} order by a.id
+  </select>
+  <select id="selectOptions" resultMap="OptionItemMap">
+    select id,question_id,option_key,cast(option_content as char) option_content
+    from exam_question_option where question_id=#{questionId} order by sort_order,id
+  </select>
+  <update id="updateSubjectiveScore">
+    update student_exam_answer set score=#{score},updated_at=now()
+    where id=#{answerId} and record_id=#{recordId} and question_type in ('FILL','SHORT','PROGRAMMING')
+      and #{score} &lt;= question_score
+  </update>
+  <select id="countUnscored" resultType="int">select count(1) from student_exam_answer where record_id=#{recordId} and score is null</select>
+  <select id="sumScore" resultType="java.math.BigDecimal">select coalesce(sum(score),0) from student_exam_answer where record_id=#{recordId}</select>
+  <update id="updateRecordGrade">
+    update student_exam_record set score=#{score},grading_status=#{gradingStatus},updated_at=now()
+    where id=#{recordId} and status='SUBMITTED'
+  </update>
+</mapper>

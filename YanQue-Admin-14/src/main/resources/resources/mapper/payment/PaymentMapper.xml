@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yanque.modules.payment.mapper.PaymentMapper">
+  <resultMap id="PaymentMap" type="cn.yanque.modules.payment.pojo.PaymentModels$PaymentOrderItem">
+    <id property="id" column="id"/><result property="orderNo" column="order_no"/>
+    <result property="studentPhone" column="student_phone"/><result property="studentName" column="student_name"/>
+    <result property="productId" column="product_id"/><result property="productContent" column="product_content"/>
+    <result property="teachingMode" column="teaching_mode"/>
+    <result property="orderAmount" column="order_amount"/><result property="refundedAmount" column="refunded_amount"/>
+    <result property="prepayOrderNo" column="prepay_order_no"/><result property="status" column="status"/>
+    <result property="uniqueOrderNo" column="unique_order_no"/><result property="paySuccessTime" column="pay_success_time"/>
+    <result property="createdAt" column="created_at"/><result property="updatedAt" column="updated_at"/>
+  </resultMap>
+  <sql id="PaymentSelect">
+    select op.id,op.order_no,op.student_phone,op.student_name,op.product_id,p.course_content product_content,p.teaching_mode,
+      op.order_amount,op.refunded_amount,op.prepay_order_no,op.status,op.unique_order_no,
+      op.pay_success_time,op.created_at,op.updated_at
+    from order_payment op left join order_product p on cast(p.id as char)=op.product_id
+  </sql>
+  <select id="selectPage" resultMap="PaymentMap">
+    <include refid="PaymentSelect"/><where>
+      <if test="req.orderNo != null and req.orderNo != ''">and op.order_no like concat('%',#{req.orderNo},'%')</if>
+      <if test="req.studentName != null and req.studentName != ''">and op.student_name like concat('%',#{req.studentName},'%')</if>
+      <if test="req.studentPhone != null and req.studentPhone != ''">and op.student_phone like concat('%',#{req.studentPhone},'%')</if>
+      <if test="req.prepayOrderNo != null and req.prepayOrderNo != ''">and op.prepay_order_no like concat('%',#{req.prepayOrderNo},'%')</if>
+      <if test="req.status != null and req.status != ''">and op.status=#{req.status}</if>
+    </where>order by op.id desc
+  </select>
+  <select id="selectByOrderNo" resultMap="PaymentMap"><include refid="PaymentSelect"/> where op.order_no=#{orderNo}</select>
+  <select id="selectPendingByOrderNo" resultType="cn.yanque.modules.prepay.pojo.PrepayOrderModels$PrepayOrderItem">
+    select po.*,p.course_content product_content from prepay_order po inner join order_product p on p.id=po.product_id
+    where po.order_no=#{orderNo} and po.student_phone=#{phone} and po.order_status='PENDING_PAYMENT'
+  </select>
+  <insert id="insertPayment" useGeneratedKeys="true" keyProperty="id">
+    insert into order_payment(order_no,student_phone,student_name,product_id,order_amount,refunded_amount,
+      prepay_order_no,status,created_at,updated_at)
+    values(#{orderNo},#{studentPhone},#{studentName},#{productId},#{orderAmount},0,
+      #{prepayOrderNo},'INIT',now(),now())
+  </insert>
+  <update id="markProcessing">update order_payment set status='PROCESSING',updated_at=now() where order_no=#{orderNo} and status='INIT'</update>
+  <update id="markFailed">update order_payment set status='FAIL',updated_at=now() where order_no=#{orderNo} and status in ('INIT','PROCESSING')</update>
+  <update id="markSuccess">update order_payment set status='SUCCESS',unique_order_no=#{tradeNo},pay_success_time=coalesce(pay_success_time,now()),updated_at=now() where order_no=#{orderNo} and status in ('INIT','PROCESSING')</update>
+  <update id="markPrepayPaid">update prepay_order set order_status='PAID',updated_at=now() where order_no=#{prepayOrderNo} and order_status='PENDING_PAYMENT'</update>
+  <select id="countOrderNo" resultType="int">select count(1) from order_payment where order_no=#{orderNo}</select>
+  <select id="countStudentPhone" resultType="int">select count(1) from student where student_phone=#{phone}</select>
+  <insert id="insertStudent" useGeneratedKeys="true" keyProperty="id">
+    insert into student(student_no,student_name,student_phone,password,education,grade_year,school,major,
+      teaching_mode,class_id,status,created_at,updated_at)
+    values(#{studentNo},#{studentName},#{studentPhone},#{password},#{education},#{gradeYear},#{school},#{major},
+      #{teachingMode},null,'ACTIVE',now(),now())
+  </insert>
+  <insert id="insertStudentProduct">
+    insert into student_product(student_id,product_id,source_order_no,status,created_at,updated_at)
+    values(#{studentId},#{productId},#{orderNo},'ACTIVE',now(),now())
+  </insert>
+</mapper>

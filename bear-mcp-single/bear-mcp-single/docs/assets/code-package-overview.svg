@@ -1,0 +1,61 @@
+<svg width="1280" height="900" viewBox="0 0 1280 900" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">代码包整体展开图</title>
+  <desc id="desc">以 IDE 目录树形式展开 com.bear.mcp.single 包，展示 admin、common、core、gateway、publicapi、share 和 core 下核心子包</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}.panel{fill:#fff;stroke:#d8e2ee;stroke-width:1.6}.root{fill:#172033}.selected{fill:#dbeafe;stroke:#93c5fd}.folder{fill:#f1f5f9;stroke:#cbd5e1}.core{fill:#f0fdf4;stroke:#86efac}.side{fill:#fff;stroke:#d8e2ee}.title{fill:#172033;font:700 28px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.h{fill:#172033;font:700 18px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.text{fill:#172033;font:16px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.sub{fill:#64748b;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.tiny{fill:#64748b;font:13px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.white{fill:#fff;font:700 17px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.line{stroke:#cbd5e1;stroke-width:1.4;fill:none}.arrow{fill:#64748b;font:16px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.badge{fill:#eff6ff;stroke:#93c5fd}.badgeText{fill:#334155;font:13px Arial,"PingFang SC","Microsoft YaHei",sans-serif}
+    </style>
+  </defs>
+
+  <rect class="bg" width="1280" height="900" rx="24"/>
+  <text class="title" x="52" y="58">代码包整体展开图</text>
+  <text class="sub" x="52" y="84">按照 IDE 目录树看项目：`core` 是能力中心，`gateway` 是 MCP 协议入口，`admin/share/publicapi` 是治理和创作入口。</text>
+
+  <rect class="panel" x="54" y="118" width="620" height="720" rx="22"/>
+  <rect class="side" x="706" y="118" width="520" height="720" rx="22"/>
+
+  <text class="h" x="94" y="158">com / bear / mcp / single</text>
+  <text class="sub" x="94" y="184">主代码根包</text>
+
+  <text class="arrow" x="96" y="230">▾</text><rect class="folder" x="124" y="210" width="150" height="32" rx="8"/><text class="text" x="146" y="232">admin</text>
+  <text class="tiny" x="292" y="232">后台治理：用户、角色、Token、资产、审计</text>
+
+  <text class="arrow" x="96" y="274">▾</text><rect class="folder" x="124" y="254" width="150" height="32" rx="8"/><text class="text" x="146" y="276">common</text>
+  <text class="tiny" x="292" y="276">统一响应、业务异常、全局异常处理</text>
+
+  <rect class="selected" x="86" y="298" width="540" height="44" rx="10"/>
+  <text class="arrow" x="96" y="326">▾</text><rect class="core" x="124" y="304" width="150" height="32" rx="8"/><text class="text" x="146" y="326">core</text>
+  <text class="tiny" x="292" y="326">企业 MCP 核心能力层</text>
+
+  <path class="line" d="M132 342 V742"/>
+  <text class="arrow" x="142" y="370">›</text><rect class="folder" x="172" y="350" width="138" height="30" rx="8"/><text class="text" x="194" y="371">audit</text><text class="tiny" x="326" y="371">审计日志</text>
+  <text class="arrow" x="142" y="410">›</text><rect class="folder" x="172" y="390" width="138" height="30" rx="8"/><text class="text" x="194" y="411">auth</text><text class="tiny" x="326" y="411">Token 校验</text>
+  <text class="arrow" x="142" y="450">›</text><rect class="folder" x="172" y="430" width="138" height="30" rx="8"/><text class="text" x="194" y="451">context</text><text class="tiny" x="326" y="451">MCP 用户上下文</text>
+  <text class="arrow" x="142" y="490">›</text><rect class="folder" x="172" y="470" width="138" height="30" rx="8"/><text class="text" x="194" y="491">datasource</text><text class="tiny" x="326" y="491">外部数据源只读查询</text>
+  <text class="arrow" x="142" y="530">›</text><rect class="folder" x="172" y="510" width="138" height="30" rx="8"/><text class="text" x="194" y="531">dynamic</text><text class="tiny" x="326" y="531">动态工具发现和执行</text>
+  <text class="arrow" x="142" y="570">›</text><rect class="folder" x="172" y="550" width="138" height="30" rx="8"/><text class="text" x="194" y="571">entity</text><text class="tiny" x="326" y="571">数据库实体</text>
+  <text class="arrow" x="142" y="610">›</text><rect class="folder" x="172" y="590" width="138" height="30" rx="8"/><text class="text" x="194" y="611">feishu</text><text class="tiny" x="326" y="611">飞书远程 MCP 代理</text>
+  <text class="arrow" x="142" y="650">›</text><rect class="folder" x="172" y="630" width="138" height="30" rx="8"/><text class="text" x="194" y="651">groovy</text><text class="tiny" x="326" y="651">动态脚本引擎</text>
+  <text class="arrow" x="142" y="690">›</text><rect class="folder" x="172" y="670" width="138" height="30" rx="8"/><text class="text" x="194" y="691">mapper</text><text class="tiny" x="326" y="691">MyBatis 数据访问</text>
+  <text class="arrow" x="142" y="730">›</text><rect class="folder" x="172" y="710" width="138" height="30" rx="8"/><text class="text" x="194" y="731">prompt</text><text class="tiny" x="326" y="731">Prompt 模板和权限</text>
+  <text class="arrow" x="142" y="770">›</text><rect class="folder" x="172" y="750" width="138" height="30" rx="8"/><text class="text" x="194" y="771">request</text><text class="tiny" x="326" y="771">API 配置执行</text>
+  <text class="arrow" x="142" y="810">›</text><rect class="folder" x="172" y="790" width="138" height="30" rx="8"/><text class="text" x="194" y="811">resource</text><text class="tiny" x="326" y="811">文档资源权限</text>
+
+  <text class="h" x="738" y="158">core 下面剩余重点包</text>
+  <rect class="folder" x="748" y="190" width="148" height="34" rx="8"/><text class="text" x="772" y="213">selection</text><text class="sub" x="916" y="213">Token 级工具 / Prompt / Resource 选择</text>
+  <rect class="folder" x="748" y="244" width="148" height="34" rx="8"/><text class="text" x="772" y="267">skill</text><text class="sub" x="916" y="267">Skill 元信息解析、打包和下载</text>
+  <rect class="folder" x="748" y="298" width="148" height="34" rx="8"/><text class="text" x="772" y="321">storage</text><text class="sub" x="916" y="321">TOS 对象存储封装</text>
+  <rect class="folder" x="748" y="352" width="148" height="34" rx="8"/><text class="text" x="772" y="375">tools</text><text class="sub" x="916" y="375">内置 @Tool 和飞书代理工具</text>
+
+  <text class="h" x="738" y="440">根包下其他入口</text>
+  <rect class="folder" x="748" y="472" width="148" height="34" rx="8"/><text class="text" x="772" y="495">gateway</text><text class="sub" x="916" y="495">/mcp Filter：鉴权、改写、短路、审计触发</text>
+  <rect class="folder" x="748" y="526" width="148" height="34" rx="8"/><text class="text" x="772" y="549">publicapi</text><text class="sub" x="916" y="549">公开 Skill 下载等外部访问</text>
+  <rect class="folder" x="748" y="580" width="148" height="34" rx="8"/><text class="text" x="772" y="603">share</text><text class="sub" x="916" y="603">创作空间：API / Tool / Prompt / Resource / Skill</text>
+
+  <rect class="root" x="748" y="668" width="430" height="70" rx="16"/>
+  <text class="white" x="780" y="698">SingleMcpApplication</text>
+  <text class="wsub" x="780" y="720">应用启动入口，Spring AI MCP Server 随应用启动注册 /mcp</text>
+
+  <rect class="badge" x="738" y="778" width="440" height="42" rx="12"/>
+  <text class="badgeText" x="766" y="805">讲解口诀：gateway 接协议，core 做能力，admin/share 生产和治理能力。</text>
+</svg>

@@ -1,0 +1,53 @@
+<svg width="1280" height="620" viewBox="0 0 1280 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">API 配置化调用价值</title>
+  <desc id="desc">动态工具通过 Groovy 调用 runRequest，runRequest 根据 API 配置访问内部业务系统或外部第三方 API，并统一治理鉴权参数超时限流和审计</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}.panel{fill:#fff;stroke:#d8e2ee;stroke-width:1.6}.dark{fill:#172033}.green{fill:#f0fdf4;stroke:#86efac}.blue{fill:#eff6ff;stroke:#93c5fd}.orange{fill:#fff7ed;stroke:#fdba74}.purple{fill:#f5f3ff;stroke:#c4b5fd}.cyan{fill:#ecfeff;stroke:#67e8f9}.gray{fill:#f1f5f9;stroke:#cbd5e1}.title{fill:#172033;font:700 28px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.h{fill:#172033;font:700 18px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.sub{fill:#64748b;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.tiny{fill:#64748b;font:12px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.white{fill:#fff;font:700 18px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.wsub{fill:#cbd5e1;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.line{stroke:#94a3b8;stroke-width:2.4;fill:none;marker-end:url(#arrow)}.dash{stroke:#94a3b8;stroke-width:2.1;fill:none;stroke-dasharray:7 6;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/></marker>
+  </defs>
+
+  <rect class="bg" width="1280" height="620" rx="24"/>
+  <text class="title" x="52" y="62">为什么需要 API 配置：把底层接口变成可治理的工具调用</text>
+  <text class="sub" x="52" y="88">很多 MCP Tool 最终还是要访问业务系统，API 配置负责把接口地址、鉴权、参数、超时、限流和白名单沉淀下来。</text>
+
+  <rect class="dark" x="70" y="250" width="170" height="90" rx="18"/>
+  <text class="white" x="112" y="286">MCP Tool</text>
+  <text class="wsub" x="104" y="314">面向模型的能力</text>
+
+  <path class="line" d="M240 295 H326"/>
+  <rect class="green" x="326" y="236" width="180" height="118" rx="18"/>
+  <text class="h" x="386" y="272">Groovy</text>
+  <text class="sub" x="364" y="300">参数处理</text>
+  <text class="sub" x="364" y="324">流程编排</text>
+
+  <path class="line" d="M506 295 H594"/>
+  <rect class="blue" x="594" y="220" width="224" height="150" rx="18"/>
+  <text class="h" x="650" y="258">runRequest</text>
+  <text class="sub" x="630" y="286">按 config_key 调用</text>
+  <text class="sub" x="630" y="312">校验工具绑定白名单</text>
+  <text class="sub" x="630" y="338">统一返回结果</text>
+
+  <path class="line" d="M818 295 H900"/>
+  <rect class="orange" x="900" y="160" width="272" height="270" rx="22"/>
+  <text class="h" x="976" y="198">API 配置</text>
+  <text class="sub" x="940" y="230">URL / Method</text>
+  <text class="sub" x="940" y="258">Headers / Body 模板</text>
+  <text class="sub" x="940" y="286">默认参数 / 变量替换</text>
+  <text class="sub" x="940" y="314">鉴权信息 / 超时</text>
+  <text class="sub" x="940" y="342">限流 / 启停状态</text>
+  <text class="sub" x="940" y="370">内部或外部 API</text>
+
+  <rect class="panel" x="70" y="450" width="1102" height="80" rx="18"/>
+  <text class="h" x="104" y="482">如果没有 API 配置</text>
+  <text class="sub" x="104" y="508">每个工具脚本都可能自己写 URL、Header、鉴权和参数拼接，接口变更后到处修改，也很难统一限制哪些工具能调哪些接口。</text>
+
+  <rect class="purple" x="910" y="462" width="120" height="42" rx="12"/>
+  <text class="tiny" x="938" y="488">内部业务 API</text>
+  <rect class="cyan" x="1048" y="462" width="96" height="42" rx="12"/>
+  <text class="tiny" x="1070" y="488">三方 API</text>
+
+  <path class="dash" d="M1036 430 V462"/>
+  <path class="dash" d="M1096 430 V462"/>
+</svg>

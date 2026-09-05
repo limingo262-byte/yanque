@@ -1,0 +1,116 @@
+<svg width="1320" height="820" viewBox="0 0 1320 820" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">企业 MCP Server 整体架构</title>
+  <desc id="desc">用分层泳道展示企业 MCP Server 中内置工具、动态工具、Prompt、Resource 和管理端的不同运行链路</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}.lane{fill:#fff;stroke:#d8e2ee;stroke-width:1.5}.lane2{fill:#f9fbff;stroke:#d8e2ee;stroke-width:1.5}.dark{fill:#172033}.blue{fill:#eff6ff;stroke:#93c5fd}.green{fill:#f0fdf4;stroke:#86efac}.orange{fill:#fff7ed;stroke:#fdba74}.purple{fill:#f5f3ff;stroke:#c4b5fd}.cyan{fill:#ecfeff;stroke:#67e8f9}.gray{fill:#f1f5f9;stroke:#cbd5e1}.red{fill:#fef2f2;stroke:#fca5a5}.title{fill:#172033;font:700 28px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.h{fill:#172033;font:700 17px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.sub{fill:#64748b;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.tiny{fill:#64748b;font:12px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.white{fill:#fff;font:700 17px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.wsub{fill:#cbd5e1;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.line{stroke:#94a3b8;stroke-width:2.5;fill:none;marker-end:url(#arrow)}.dash{stroke:#94a3b8;stroke-width:2.2;fill:none;stroke-dasharray:7 6;marker-end:url(#arrow)}.n{fill:#172033;font:700 14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.badge{fill:#fff;stroke:#94a3b8;stroke-width:1.5}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1320" height="820" rx="24"/>
+  <text class="title" x="46" y="58">企业 MCP Server：AI 能力接入与治理平台</text>
+  <text class="sub" x="46" y="84">核心看四条链路：工具发现、内置工具调用、动态工具 Groovy 执行、Prompt / Resource 短路返回。</text>
+
+  <rect class="dark" x="52" y="156" width="178" height="104" rx="18"/>
+  <text class="white" x="92" y="194">MCP Client</text>
+  <text class="wsub" x="86" y="222">Cursor / Claude</text>
+  <text class="wsub" x="84" y="246">POST /mcp</text>
+  <path class="line" d="M230 208 H290"/>
+
+  <rect class="lane" x="290" y="118" width="312" height="610" rx="22"/>
+  <text class="h" x="326" y="154">gateway/：协议网关</text>
+  <text class="sub" x="326" y="180">按 JSON-RPC method 分流</text>
+  <rect class="blue" x="330" y="212" width="232" height="62" rx="14"/>
+  <text class="h" x="384" y="248">ApiKeyAuthFilter</text>
+  <text class="tiny" x="390" y="266">Token 鉴权 + 用户上下文</text>
+  <rect class="green" x="330" y="314" width="232" height="62" rx="14"/>
+  <text class="h" x="382" y="350">ToolsListFilter</text>
+  <text class="tiny" x="382" y="368">过滤内置工具 + 注入动态工具</text>
+  <rect class="orange" x="330" y="416" width="232" height="62" rx="14"/>
+  <text class="h" x="382" y="452">ToolsCallFilter</text>
+  <text class="tiny" x="384" y="470">统一鉴权，然后分流</text>
+  <rect class="cyan" x="330" y="518" width="232" height="62" rx="14"/>
+  <text class="h" x="362" y="554">Prompts / Resources Filter</text>
+  <text class="tiny" x="388" y="572">短路返回 get/list/read</text>
+  <rect class="purple" x="330" y="620" width="232" height="62" rx="14"/>
+  <text class="h" x="392" y="656">审计补齐</text>
+  <text class="tiny" x="382" y="674">调用主体、参数、结果、耗时</text>
+
+  <rect class="lane2" x="660" y="118" width="232" height="276" rx="22"/>
+  <text class="h" x="716" y="154">Spring AI</text>
+  <text class="sub" x="696" y="180">只执行内置 @Tool</text>
+  <rect class="gray" x="704" y="224" width="144" height="66" rx="14"/>
+  <text class="h" x="740" y="264">@Tool</text>
+  <text class="tiny" x="720" y="318">动态工具不经过 Spring AI</text>
+
+  <rect class="lane" x="660" y="444" width="396" height="284" rx="22"/>
+  <text class="h" x="700" y="480">core/：运行时能力层</text>
+  <rect class="green" x="704" y="520" width="144" height="62" rx="14"/>
+  <text class="h" x="740" y="556">动态 Tool</text>
+  <text class="tiny" x="734" y="574">查库 + 权限校验</text>
+  <rect class="orange" x="892" y="520" width="122" height="62" rx="14"/>
+  <text class="h" x="922" y="556">Groovy</text>
+  <text class="tiny" x="914" y="574">脚本执行引擎</text>
+  <rect class="cyan" x="704" y="624" width="144" height="62" rx="14"/>
+  <text class="h" x="738" y="660">Prompt</text>
+  <text class="tiny" x="724" y="678">模板渲染</text>
+  <rect class="cyan" x="870" y="624" width="144" height="62" rx="14"/>
+  <text class="h" x="904" y="660">Resource</text>
+  <text class="tiny" x="896" y="678">TOS 文本读取</text>
+  <rect class="purple" x="892" y="444" width="122" height="48" rx="12"/>
+  <text class="h" x="920" y="474">审计</text>
+  <path class="line" d="M848 551 H892"/>
+  <text class="tiny" x="850" y="536">脚本执行</text>
+  <path class="line" d="M953 520 V492"/>
+
+  <rect class="lane" x="1110" y="118" width="164" height="610" rx="22"/>
+  <text class="h" x="1154" y="154">外部依赖</text>
+  <rect class="blue" x="1134" y="214" width="116" height="56" rx="12"/>
+  <text class="h" x="1164" y="248">MySQL</text>
+  <rect class="green" x="1134" y="340" width="116" height="56" rx="12"/>
+  <text class="h" x="1154" y="374">HTTP API</text>
+  <rect class="orange" x="1134" y="466" width="116" height="56" rx="12"/>
+  <text class="h" x="1158" y="500">外部 DB</text>
+  <rect class="purple" x="1134" y="592" width="116" height="56" rx="12"/>
+  <text class="h" x="1170" y="626">TOS</text>
+
+  <rect class="lane" x="52" y="550" width="178" height="178" rx="20"/>
+  <text class="h" x="96" y="588">管理入口</text>
+  <rect class="green" x="82" y="620" width="118" height="44" rx="12"/>
+  <text class="h" x="106" y="648">admin-web</text>
+  <rect class="purple" x="82" y="678" width="118" height="44" rx="12"/>
+  <text class="h" x="112" y="706">share/</text>
+  <path class="line" d="M230 638 H290"/>
+
+  <circle class="badge" cx="626" cy="345" r="16"/><text class="n" x="622" y="350">1</text>
+  <text class="tiny" x="642" y="340">工具发现</text>
+  <path class="dash" d="M562 345 H660"/>
+
+  <circle class="badge" cx="626" cy="252" r="16"/><text class="n" x="622" y="257">2</text>
+  <text class="tiny" x="642" y="247">内置调用</text>
+  <path class="line" d="M562 447 C604 396 622 288 660 257"/>
+
+  <circle class="badge" cx="626" cy="548" r="16"/><text class="n" x="622" y="553">3</text>
+  <text class="tiny" x="642" y="543">动态调用</text>
+  <path class="line" d="M562 447 C612 486 638 528 704 551"/>
+
+  <circle class="badge" cx="626" cy="660" r="16"/><text class="n" x="622" y="665">4</text>
+  <text class="tiny" x="642" y="655">提示词/资源</text>
+  <path class="line" d="M562 549 C610 604 638 650 704 655"/>
+
+  <path class="dash" d="M953 551 C1030 500 1062 390 1134 368"/>
+  <text class="tiny" x="1010" y="430">Groovy runRequest</text>
+  <path class="dash" d="M953 582 C1036 596 1066 506 1134 494"/>
+  <text class="tiny" x="1010" y="548">Groovy runSql</text>
+  <path class="dash" d="M942 686 C1024 708 1064 632 1134 620"/>
+  <text class="tiny" x="1010" y="686">Resource 读 TOS</text>
+  <path class="dash" d="M848 551 C950 480 1044 268 1134 242"/>
+  <text class="tiny" x="970" y="302">工具/配置/选择来自 MySQL</text>
+
+  <rect class="red" x="46" y="746" width="1210" height="54" rx="12"/>
+  <text class="h" x="76" y="778">读图重点：</text>
+  <text class="sub" x="174" y="778">Spring AI 只负责内置 @Tool；动态工具由网关短路到 DynamicToolService，再通过 Groovy 执行 runRequest / runSql。</text>
+</svg>

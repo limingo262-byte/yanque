@@ -1,0 +1,61 @@
+<svg width="1280" height="760" viewBox="0 0 1280 760" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">企业 MCP Server Filter 路由图</title>
+  <desc id="desc">展示 ApiKeyAuthFilter、Resources、Initialize、ToolsList、ToolsCall、Prompts Filter 按 JSON-RPC method 分流的策略</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}.card{fill:#fff;stroke:#d8e2ee;stroke-width:1.5}.dark{fill:#172033}.blue{fill:#eff6ff;stroke:#93c5fd}.green{fill:#f0fdf4;stroke:#86efac}.orange{fill:#fff7ed;stroke:#fdba74}.purple{fill:#f5f3ff;stroke:#c4b5fd}.cyan{fill:#ecfeff;stroke:#67e8f9}.red{fill:#fef2f2;stroke:#fca5a5}.title{fill:#172033;font:700 28px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.h{fill:#172033;font:700 17px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.sub{fill:#64748b;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.white{fill:#fff;font:700 17px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.wsub{fill:#cbd5e1;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.line{stroke:#94a3b8;stroke-width:2.3;fill:none;marker-end:url(#arrow)}.dash{stroke:#94a3b8;stroke-width:2.1;fill:none;stroke-dasharray:7 6;marker-end:url(#arrow)}.tag{fill:#475569;font:13px Arial,"PingFang SC","Microsoft YaHei",sans-serif}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/></marker>
+  </defs>
+  <rect class="bg" width="1280" height="760" rx="24"/>
+  <text class="title" x="46" y="58">/mcp 不是 Controller：用 6 个 Filter 在协议层扩展 Spring AI</text>
+  <text class="sub" x="46" y="84">同一个 POST /mcp，根据 JSON-RPC method 选择放行、改写响应或短路返回。</text>
+
+  <rect class="dark" x="54" y="162" width="160" height="82" rx="15"/>
+  <text class="white" x="88" y="195">MCP 请求</text>
+  <text class="wsub" x="88" y="220">JSON-RPC</text>
+  <path class="line" d="M214 203 H268"/>
+
+  <rect class="blue" x="268" y="142" width="190" height="122" rx="16"/>
+  <text class="h" x="314" y="174">Order 10</text>
+  <text class="h" x="304" y="204">ApiKeyAuthFilter</text>
+  <text class="sub" x="306" y="230">Token 无效直接 401</text>
+  <path class="line" d="M458 203 H518"/>
+
+  <rect class="card" x="518" y="116" width="700" height="600" rx="20"/>
+  <text class="h" x="552" y="152">按 method 分流</text>
+  <line x1="560" y1="190" x2="560" y2="650" stroke="#cbd5e1" stroke-width="2"/>
+
+  <rect class="green" x="600" y="184" width="210" height="72" rx="14"/>
+  <text class="h" x="640" y="215">resources/list</text><text class="sub" x="642" y="238">短路：直接查库返回</text>
+  <path class="line" d="M810 220 H930"/>
+  <rect class="green" x="930" y="184" width="210" height="72" rx="14"/>
+  <text class="h" x="958" y="215">McpResourcesFilter</text><text class="sub" x="970" y="238">Order 18</text>
+
+  <rect class="cyan" x="600" y="282" width="210" height="72" rx="14"/>
+  <text class="h" x="652" y="313">initialize</text><text class="sub" x="633" y="336">改写 capability</text>
+  <path class="line" d="M810 318 H930"/>
+  <rect class="cyan" x="930" y="282" width="210" height="72" rx="14"/>
+  <text class="h" x="946" y="313">InitializeFilter</text><text class="sub" x="970" y="336">Order 19</text>
+
+  <rect class="purple" x="600" y="380" width="210" height="72" rx="14"/>
+  <text class="h" x="658" y="411">tools/list</text><text class="sub" x="640" y="434">放行后过滤 + 注入</text>
+  <path class="line" d="M810 416 H930"/>
+  <rect class="purple" x="930" y="380" width="210" height="72" rx="14"/>
+  <text class="h" x="954" y="411">ToolsListFilter</text><text class="sub" x="970" y="434">Order 20</text>
+
+  <rect class="orange" x="600" y="478" width="210" height="72" rx="14"/>
+  <text class="h" x="656" y="509">tools/call</text><text class="sub" x="624" y="532">先鉴权，再判断工具类型</text>
+  <path class="line" d="M810 514 H930"/>
+  <rect class="orange" x="930" y="478" width="210" height="72" rx="14"/>
+  <text class="h" x="956" y="509">ToolsCallFilter</text><text class="sub" x="970" y="532">Order 21</text>
+
+  <rect class="red" x="600" y="576" width="210" height="72" rx="14"/>
+  <text class="h" x="648" y="607">prompts/get</text><text class="sub" x="640" y="630">短路：渲染模板</text>
+  <path class="line" d="M810 612 H930"/>
+  <rect class="red" x="930" y="576" width="210" height="72" rx="14"/>
+  <text class="h" x="956" y="607">PromptsFilter</text><text class="sub" x="970" y="630">Order 22</text>
+
+  <path class="dash" d="M1035 282 V120 H760 V116"/>
+  <text class="tag" x="820" y="108">非短路或改写类请求继续进入 Spring AI</text>
+</svg>

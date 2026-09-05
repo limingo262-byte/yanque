@@ -1,0 +1,65 @@
+<svg width="1280" height="740" viewBox="0 0 1280 740" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">tools/call 统一鉴权与分流</title>
+  <desc id="desc">McpToolsCallFilter 对内置工具和动态工具先做同一套 canCall 权限校验，再分别放行 Spring AI 或短路执行 Groovy</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}.card{fill:#fff;stroke:#d8e2ee;stroke-width:1.5}.dark{fill:#172033}.blue{fill:#eff6ff;stroke:#93c5fd}.green{fill:#f0fdf4;stroke:#86efac}.orange{fill:#fff7ed;stroke:#fdba74}.purple{fill:#f5f3ff;stroke:#c4b5fd}.red{fill:#fef2f2;stroke:#fca5a5}.cyan{fill:#ecfeff;stroke:#67e8f9}.title{fill:#172033;font:700 28px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.h{fill:#172033;font:700 17px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.sub{fill:#64748b;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.white{fill:#fff;font:700 17px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.wsub{fill:#cbd5e1;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.line{stroke:#94a3b8;stroke-width:2.4;fill:none;marker-end:url(#arrow)}.dash{stroke:#94a3b8;stroke-width:2.1;fill:none;stroke-dasharray:7 6;marker-end:url(#arrow)}.tag{fill:#475569;font:13px Arial,"PingFang SC","Microsoft YaHei",sans-serif}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/></marker>
+  </defs>
+  <rect class="bg" width="1280" height="740" rx="24"/>
+  <text class="title" x="46" y="58">tools/call：内置工具和动态工具先过同一个权限闸门</text>
+  <text class="sub" x="46" y="84">项目亮点：不是只有动态工具受控，内置 @Tool 也必须满足角色授权和 Token 选择。</text>
+
+  <rect class="dark" x="60" y="166" width="166" height="78" rx="15"/>
+  <text class="white" x="98" y="198">tools/call</text>
+  <text class="wsub" x="96" y="222">name + args</text>
+  <path class="line" d="M226 205 H286"/>
+
+  <rect class="blue" x="286" y="142" width="210" height="126" rx="16"/>
+  <text class="h" x="332" y="178">解析请求</text>
+  <text class="sub" x="328" y="208">method / toolName</text>
+  <text class="sub" x="328" y="232">arguments / requestId</text>
+  <path class="line" d="M496 205 H556"/>
+
+  <rect class="orange" x="556" y="142" width="238" height="126" rx="16"/>
+  <text class="h" x="600" y="178">canCall(context, tool)</text>
+  <text class="sub" x="600" y="208">allowedTools 包含</text>
+  <text class="sub" x="600" y="232">Token selection 也包含</text>
+  <path class="line" d="M794 205 H854"/>
+
+  <rect class="red" x="854" y="142" width="210" height="126" rx="16"/>
+  <text class="h" x="902" y="178">未授权</text>
+  <text class="sub" x="892" y="208">JSON-RPC error</text>
+  <text class="sub" x="892" y="232">记录审计</text>
+
+  <path class="line" d="M675 268 V344"/>
+  <rect class="purple" x="538" y="344" width="274" height="86" rx="16"/>
+  <text class="h" x="600" y="378">判断是不是动态工具</text>
+  <text class="sub" x="600" y="404">dynamicToolService.findEnabledByName</text>
+
+  <path class="line" d="M538 387 H330"/>
+  <text class="tag" x="386" y="370">不是动态工具</text>
+  <rect class="green" x="74" y="344" width="256" height="116" rx="16"/>
+  <text class="h" x="132" y="380">内置 @Tool</text>
+  <text class="sub" x="116" y="410">放行给 Spring AI 执行</text>
+  <text class="sub" x="116" y="434">Filter 捕获响应并审计</text>
+
+  <path class="line" d="M812 387 H1018"/>
+  <text class="tag" x="858" y="370">是动态工具</text>
+  <rect class="cyan" x="1018" y="344" width="206" height="116" rx="16"/>
+  <text class="h" x="1070" y="380">动态 Tool</text>
+  <text class="sub" x="1060" y="410">短路执行 Groovy</text>
+  <text class="sub" x="1060" y="434">不进入 Spring AI</text>
+
+  <path class="line" d="M202 460 V548 H520"/>
+  <path class="line" d="M1121 460 V548 H760"/>
+  <rect class="card" x="520" y="512" width="240" height="100" rx="16"/>
+  <text class="h" x="578" y="548">统一返回</text>
+  <text class="sub" x="562" y="578">result.content[type=text]</text>
+  <text class="sub" x="562" y="600">或 JSON-RPC error</text>
+
+  <rect class="card" x="60" y="650" width="1164" height="52" rx="14"/>
+  <text class="h" x="96" y="683">面试重点：</text>
+  <text class="sub" x="204" y="683">Spring AI 是内置工具执行器；动态工具由 Filter 短路，避免 Spring AI 找不到 ToolCallback。</text>
+</svg>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yanque.modules.student.mapper.StudentExamMapper">
+  <resultMap id="QuestionRowMap" type="cn.yanque.modules.student.pojo.StudentExamModels$QuestionRow">
+    <id property="id" column="id"/><result property="answerId" column="answer_id"/>
+    <result property="questionId" column="question_id"/><result property="questionContent" column="question_content" javaType="java.lang.String"/>
+    <result property="questionType" column="question_type"/><result property="difficulty" column="difficulty"/>
+    <result property="questionScore" column="question_score"/><result property="correctAnswer" column="correct_answer" javaType="java.lang.String"/>
+    <result property="analysisContent" column="analysis_content" javaType="java.lang.String"/>
+    <result property="answerContent" column="answer_content" javaType="java.lang.String"/>
+    <result property="correct" column="correct"/><result property="score" column="score"/>
+  </resultMap>
+  <resultMap id="OptionItemMap" type="cn.yanque.modules.student.pojo.StudentExamModels$OptionItem">
+    <id property="id" column="id"/><result property="questionId" column="question_id"/>
+    <result property="optionKey" column="option_key"/><result property="optionContent" column="option_content" javaType="java.lang.String"/>
+  </resultMap>
+  <select id="selectExams" resultType="cn.yanque.modules.student.pojo.StudentExamModels$ExamRow">
+    select e.id,e.paper_id,p.paper_name,e.class_id,c.class_period,p.course_id,p.stage_name,e.start_time,e.end_time,
+      e.duration_minutes,e.invigilator_user_id,
+      coalesce(nullif(u.real_name,''),nullif(u.nickname,''),u.username) invigilator_name,p.total_score,
+      r.id record_id,r.status record_status,r.grading_status,r.start_time record_start_time,
+      r.deadline_time,r.submit_time,case when e.answer_visible=1 then r.score end score
+    from exam e inner join exam_paper p on p.id=e.paper_id inner join sys_class c on c.id=e.class_id
+    left join sys_user u on u.id=cast(e.invigilator_user_id as unsigned)
+    left join student_exam_record r on r.exam_id=e.id and r.student_id=#{studentId}
+    where e.class_id=#{classId} order by e.start_time desc,e.id desc
+  </select>
+  <select id="selectExamForStart" resultType="cn.yanque.modules.student.pojo.StudentExamModels$RecordRow">
+    select e.id exam_id,e.paper_id,e.class_id,e.start_time exam_start_time,e.end_time exam_end_time,e.duration_minutes
+    from exam e where e.id=#{examId} and e.class_id=#{classId}
+  </select>
+  <select id="selectRecord" resultType="cn.yanque.modules.student.pojo.StudentExamModels$RecordRow">
+    select r.id,r.exam_id,r.student_id,e.paper_id,e.class_id,e.start_time exam_start_time,e.end_time exam_end_time,
+      e.duration_minutes,r.start_time,r.deadline_time,r.submit_time,r.status,r.grading_status,r.score,e.answer_visible
+    from student_exam_record r inner join exam e on e.id=r.exam_id
+    where r.id=#{recordId} and r.student_id=#{studentId}
+  </select>
+  <select id="selectRecordByExam" resultType="cn.yanque.modules.student.pojo.StudentExamModels$RecordRow">
+    select r.id,r.exam_id,r.student_id,e.paper_id,e.class_id,e.start_time exam_start_time,e.end_time exam_end_time,
+      e.duration_minutes,r.start_time,r.deadline_time,r.submit_time,r.status,r.grading_status,r.score,e.answer_visible
+    from student_exam_record r inner join exam e on e.id=r.exam_id
+    where r.exam_id=#{examId} and r.student_id=#{studentId}
+  </select>
+  <insert id="insertRecord" useGeneratedKeys="true">
+    insert into student_exam_record(exam_id,student_id,start_time,deadline_time,status,grading_status,created_at,updated_at)
+    values(#{examId},#{studentId},#{startTime},#{deadlineTime},'IN_PROGRESS','PENDING',now(),now())
+  </insert>
+  <update id="markTimeout">update student_exam_record set status='TIMEOUT',updated_at=now() where id=#{recordId} and status='IN_PROGRESS'</update>
+  <select id="selectPaperMeta" resultType="cn.yanque.modules.student.pojo.StudentExamModels$PaperResult">
+    select r.id record_id,r.exam_id,e.paper_id,p.paper_name,e.class_id,c.class_period,p.course_id,p.stage_name,
+      p.total_score,r.start_time,r.deadline_time,r.status record_status,r.grading_status
+    from student_exam_record r inner join exam e on e.id=r.exam_id inner join exam_paper p on p.id=e.paper_id
+    inner join sys_class c on c.id=e.class_id where r.id=#{recordId} and r.student_id=#{studentId}
+  </select>
+  <select id="selectPaperQuestions" resultMap="QuestionRowMap">
+    select pq.id,pq.question_id,cast(q.question_content as char) question_content,q.question_type,q.difficulty,pq.question_score,
+      cast(q.answer_content as char) correct_answer,cast(q.analysis_content as char) analysis_content
+    from exam_paper_question pq inner join exam_question q on q.id=pq.question_id
+    where pq.paper_id=#{paperId} order by pq.id
+  </select>
+  <select id="selectSubmissionQuestions" resultMap="QuestionRowMap">
+    select a.id answer_id,a.question_id,cast(q.question_content as char) question_content,a.question_type,a.question_score,
+      cast(a.answer_content as char) answer_content,cast(q.answer_content as char) correct_answer,
+      cast(q.analysis_content as char) analysis_content,a.correct,a.score
+    from student_exam_answer a inner join exam_question q on q.id=a.question_id
+    where a.record_id=#{recordId} order by a.id
+  </select>
+  <select id="selectOptions" resultMap="OptionItemMap">
+    select id,question_id,option_key,cast(option_content as char) option_content
+    from exam_question_option where question_id=#{questionId} order by sort_order,id
+  </select>
+  <insert id="insertAnswer">
+    insert into student_exam_answer(record_id,exam_id,paper_id,question_id,question_type,question_score,
+      answer_content,correct,score,created_at,updated_at)
+    values(#{record.id},#{record.examId},#{record.paperId},#{question.questionId},#{question.questionType},
+      #{question.questionScore},#{answerContent},#{correct},#{score},now(),now())
+  </insert>
+  <update id="submitRecord">
+    update student_exam_record set submit_time=#{submitTime},status='SUBMITTED',grading_status=#{gradingStatus},
+      score=#{score},updated_at=now() where id=#{recordId} and status='IN_PROGRESS'
+  </update>
+</mapper>

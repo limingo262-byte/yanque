@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yanque.modules.course.mapper.SysCourseDetailMapper">
+
+    <resultMap id="SysCourseDetailMap" type="cn.yanque.modules.course.pojo.entity.SysCourseDetailEntity">
+        <id property="id" column="id"/>
+        <result property="courseId" column="course_id"/>
+        <result property="stageName" column="stage_name"/>
+        <result property="dayNumber" column="day_number"/>
+        <result property="classContent" column="class_content"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        id, course_id, stage_name, day_number, class_content, created_at, updated_at
+    </sql>
+
+    <select id="selectById" resultMap="SysCourseDetailMap">
+        select <include refid="BaseColumns"/> from sys_course_detail where id = #{id}
+    </select>
+
+    <select id="selectByCourseId" resultMap="SysCourseDetailMap">
+        select <include refid="BaseColumns"/> from sys_course_detail
+        where course_id = #{courseId}
+        order by
+            case when day_number is null then 1 else 0 end,
+            day_number asc,
+            id asc
+    </select>
+
+    <select id="selectStageNamesByCourseId" resultType="java.lang.String">
+        select distinct stage_name
+        from sys_course_detail
+        where course_id = #{courseId}
+          and stage_name is not null
+          and stage_name &lt;&gt; ''
+        order by stage_name asc
+    </select>
+
+    <select id="selectMaxDayNumberByCourseId" resultType="java.lang.Integer">
+        select max(day_number)
+        from sys_course_detail
+        where course_id = #{courseId}
+          and day_number is not null
+    </select>
+
+    <select id="selectMaxDayNumberByCourseIdExcludeId" resultType="java.lang.Integer">
+        select max(day_number)
+        from sys_course_detail
+        where course_id = #{courseId}
+          and day_number is not null
+          and id &lt;&gt; #{excludeId}
+    </select>
+
+    <select id="countByCourseIdAndDayNumber" resultType="int">
+        select count(1)
+        from sys_course_detail
+        where course_id = #{courseId}
+          and day_number = #{dayNumber}
+    </select>
+
+    <select id="countByCourseIdAndDayNumberExcludeId" resultType="int">
+        select count(1)
+        from sys_course_detail
+        where course_id = #{courseId}
+          and day_number = #{dayNumber}
+          and id &lt;&gt; #{excludeId}
+    </select>
+
+    <!-- 倒序后移，避免 day_number 中间态冲突 -->
+    <update id="shiftDayNumbers">
+        update sys_course_detail
+        set day_number = day_number + 1,
+            updated_at = now()
+        where course_id = #{courseId}
+          and day_number &gt;= #{fromDay}
+        order by day_number desc
+    </update>
+
+    <update id="shiftDayNumbersExcludeId">
+        update sys_course_detail
+        set day_number = day_number + 1,
+            updated_at = now()
+        where course_id = #{courseId}
+          and day_number &gt;= #{fromDay}
+          and id &lt;&gt; #{excludeId}
+        order by day_number desc
+    </update>
+
+
+    <insert id="insertBatch">
+        insert into sys_course_detail
+        (course_id, stage_name, day_number, class_content, created_at, updated_at)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.courseId}, #{item.stageName}, #{item.dayNumber}, #{item.classContent}, now(), now())
+        </foreach>
+    </insert>
+    <insert id="insert" parameterType="cn.yanque.modules.course.pojo.entity.SysCourseDetailEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into sys_course_detail
+        (course_id, stage_name, day_number, class_content, created_at, updated_at)
+        values
+        (#{courseId}, #{stageName}, #{dayNumber}, #{classContent}, now(), now())
+    </insert>
+
+    <update id="updateById" parameterType="cn.yanque.modules.course.pojo.entity.SysCourseDetailEntity">
+        update sys_course_detail
+        set stage_name = #{stageName},
+            day_number = #{dayNumber},
+            class_content = #{classContent},
+            updated_at = now()
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from sys_course_detail where id = #{id}
+    </delete>
+
+    <delete id="deleteByCourseId">
+        delete from sys_course_detail where course_id = #{courseId}
+    </delete>
+</mapper>

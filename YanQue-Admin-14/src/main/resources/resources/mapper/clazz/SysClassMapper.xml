@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yanque.modules.clazz.mapper.SysClassMapper">
+
+    <resultMap id="SysClassMap" type="cn.yanque.modules.clazz.pojo.entity.SysClassEntity">
+        <id property="id" column="id"/>
+        <result property="classPeriod" column="class_period"/>
+        <result property="headTeacherId" column="head_teacher_id"/>
+        <result property="campusId" column="campus_id"/>
+        <result property="courseId" column="course_id"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="headTeacherName" column="head_teacher_name"/>
+        <result property="campusName" column="campus_name"/>
+        <result property="courseName" column="course_name"/>
+    </resultMap>
+
+    <!-- 关联回填班主任/校区/课程名称 -->
+    <sql id="SelectWithNames">
+        select
+            c.id,
+            c.class_period,
+            c.head_teacher_id,
+            c.campus_id,
+            c.course_id,
+            c.created_at,
+            c.updated_at,
+            coalesce(nullif(u.nickname, ''), nullif(u.real_name, ''), u.username) as head_teacher_name,
+            camp.campus_location as campus_name,
+            co.course_name as course_name
+        from sys_class c
+        left join sys_user u on u.id = c.head_teacher_id
+        left join sys_campus camp on camp.id = c.campus_id
+        left join sys_course co on co.id = c.course_id
+    </sql>
+
+    <select id="selectById" resultMap="SysClassMap">
+        <include refid="SelectWithNames"/>
+        where c.id = #{id}
+    </select>
+
+    <select id="selectByClassPeriod" resultMap="SysClassMap">
+        <include refid="SelectWithNames"/>
+        where c.class_period = #{classPeriod}
+        limit 1
+    </select>
+
+    <select id="selectPage" resultMap="SysClassMap">
+        <include refid="SelectWithNames"/>
+        <where>
+            <if test="keyword != null and keyword != ''">
+                and c.class_period like concat('%', #{keyword}, '%')
+            </if>
+            <if test="headTeacherId != null">
+                and c.head_teacher_id = #{headTeacherId}
+            </if>
+            <if test="campusId != null">
+                and c.campus_id = #{campusId}
+            </if>
+            <if test="courseId != null">
+                and c.course_id = #{courseId}
+            </if>
+        </where>
+        order by c.id desc
+    </select>
+
+    <insert id="insert" parameterType="cn.yanque.modules.clazz.pojo.entity.SysClassEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into sys_class
+        (class_period, head_teacher_id, campus_id, course_id, created_at, updated_at)
+        values
+        (#{classPeriod}, #{headTeacherId}, #{campusId}, #{courseId}, now(), now())
+    </insert>
+
+    <update id="updateById" parameterType="cn.yanque.modules.clazz.pojo.entity.SysClassEntity">
+        update sys_class
+        set class_period = #{classPeriod},
+            head_teacher_id = #{headTeacherId},
+            campus_id = #{campusId},
+            course_id = #{courseId},
+            updated_at = now()
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from sys_class where id = #{id}
+    </delete>
+</mapper>

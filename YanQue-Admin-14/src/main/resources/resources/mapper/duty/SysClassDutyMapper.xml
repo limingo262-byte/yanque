@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yanque.modules.duty.mapper.SysClassDutyMapper">
+
+    <resultMap id="SysClassDutyMap" type="cn.yanque.modules.duty.pojo.entity.SysClassDutyEntity">
+        <id property="id" column="id"/>
+        <result property="classId" column="class_id"/>
+        <result property="campusId" column="campus_id"/>
+        <result property="teacherId" column="teacher_id"/>
+        <result property="dutyDate" column="duty_date"/>
+        <result property="dutyType" column="duty_type"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="remark" column="remark"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="classPeriod" column="class_period"/>
+        <result property="campusName" column="campus_name"/>
+        <result property="teacherName" column="teacher_name"/>
+    </resultMap>
+
+    <select id="selectByDutyDate" resultMap="SysClassDutyMap">
+        select
+            d.id,
+            d.class_id,
+            d.campus_id,
+            d.teacher_id,
+            d.duty_date,
+            d.duty_type,
+            d.start_time,
+            d.end_time,
+            d.remark,
+            d.created_at,
+            d.updated_at,
+            c.class_period as class_period,
+            camp.campus_location as campus_name,
+            coalesce(nullif(u.real_name, ''), nullif(u.nickname, ''), u.username) as teacher_name
+        from sys_class_duty d
+        left join sys_class c on c.id = d.class_id
+        left join sys_campus camp on camp.id = d.campus_id
+        left join sys_user u on u.id = d.teacher_id
+        where d.duty_date = #{dutyDate}
+        order by d.duty_type asc, d.class_id asc, d.campus_id asc, d.id asc
+    </select>
+
+    <delete id="deleteByDutyDate">
+        delete from sys_class_duty where duty_date = #{dutyDate}
+    </delete>
+
+    <insert id="insertBatch">
+        insert into sys_class_duty
+        (class_id, campus_id, teacher_id, duty_date, duty_type, start_time, end_time, remark, created_at, updated_at)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.classId}, #{item.campusId}, #{item.teacherId}, #{item.dutyDate},
+             #{item.dutyType}, #{item.startTime}, #{item.endTime}, #{item.remark}, now(), now())
+        </foreach>
+    </insert>
+
+    <!-- 时间段重叠：start < otherEnd && end > otherStart -->
+    <select id="countTeacherTimeConflict" resultType="int">
+        select count(1)
+        from sys_class_duty
+        where teacher_id = #{teacherId}
+          and duty_date = #{dutyDate}
+          and start_time &lt; #{endTime}
+          and end_time &gt; #{startTime}
+    </select>
+</mapper>

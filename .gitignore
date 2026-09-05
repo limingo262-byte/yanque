@@ -1,0 +1,31 @@
+# Local build output and dependencies
+**/node_modules/
+**/dist/
+**/target/
+**/.venv/
+**/.uv-cache*/
+**/.npm-cache/
+**/.npm-cache/**
+YanQue-Admin-Web-14/.npm-cache/
+YanQue-Student-Web-14/.npm-cache/
+**/*.log
+**/*.err
+**/*.out
+**/*.tsbuildinfo
+**/*.class
+
+# IDE and local environment
+**/.idea/
+**/.vscode/
+**/.env
+**/.env.*
+!.env.example
+**/.DS_Store
+
+# Local nested repository metadata is backed up before monorepo import
+**/.git.nested-backup/
+
+# Deployment secrets and runtime data
+deploy/.env
+deploy/data/
+deploy/backup/

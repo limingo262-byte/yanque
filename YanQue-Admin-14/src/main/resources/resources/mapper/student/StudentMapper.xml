@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yanque.modules.student.mapper.StudentMapper">
+  <select id="selectByLogin" resultType="cn.yanque.modules.student.pojo.StudentEntity">
+    select id,student_no,student_name,student_phone,password,teaching_mode,class_id,status
+    from student where student_no=#{account} or student_phone=#{account} limit 1
+  </select>
+  <select id="selectById" resultType="cn.yanque.modules.student.pojo.StudentEntity">
+    select id,student_no,student_name,student_phone,password,teaching_mode,class_id,status from student where id=#{id}
+  </select>
+  <select id="selectPendingOrderByPhone" resultType="cn.yanque.modules.prepay.pojo.PrepayOrderModels$PrepayOrderItem">
+    select po.id,po.order_no,po.student_name,po.student_phone,po.product_id,p.course_content product_content,
+           po.product_amount,po.discount_amount,po.order_status,po.created_at,po.updated_at
+    from prepay_order po inner join order_product p on p.id=po.product_id
+    where po.student_phone=#{phone} and po.order_status='PENDING_PAYMENT'
+    order by po.id desc limit 1
+  </select>
+  <sql id="HomeworkColumns">
+    h.id,h.title,h.content_object_key,h.content_file_name,
+    case when h.answer_student_visible=1 then h.answer_object_key end answer_object_key,
+    case when h.answer_student_visible=1 then h.answer_file_name end answer_file_name,
+    h.answer_student_visible,h.answer_student_visible answer_visible,h.class_id,c.class_period,h.homework_date,h.class_content,h.start_time,h.deadline,h.remark,
+    s.id submission_id,(s.id is not null) submitted,s.content_object_key submission_object_key,s.content_file_name submission_file_name,
+    s.submit_time,s.late_submitted,s.teacher_remark,s.score
+  </sql>
+  <select id="selectHomeworks" resultType="cn.yanque.modules.student.pojo.StudentHomeworkItem">
+    select <include refid="HomeworkColumns"/>
+    from sys_homework h inner join sys_class c on c.id=h.class_id
+    left join sys_homework_submission s on s.homework_id=h.id and s.student_id=#{studentId}
+    where h.class_id=#{classId} and h.start_time &lt;= #{now}
+    <if test="status == 'PENDING'">and s.id is null and h.deadline &gt;= #{now}</if>
+    <if test="status == 'SUBMITTED'">and s.id is not null</if>
+    <if test="status == 'EXPIRED'">and s.id is null and h.deadline &lt; #{now}</if>
+    order by h.homework_date desc,h.id desc
+  </select>
+  <select id="selectHomework" resultType="cn.yanque.modules.student.pojo.StudentHomeworkItem">
+    select <include refid="HomeworkColumns"/>
+    from sys_homework h inner join sys_class c on c.id=h.class_id
+    left join sys_homework_submission s on s.homework_id=h.id and s.student_id=#{studentId}
+    where h.id=#{homeworkId} and h.class_id=#{classId} and h.start_time &lt;= #{now}
+  </select>
+  <insert id="upsertSubmission">
+    insert into sys_homework_submission(homework_id,student_id,class_id,content_object_key,content_file_name,
+      submit_time,late_submitted,created_at,updated_at)
+    values(#{homeworkId},#{studentId},#{classId},#{objectKey},#{fileName},#{submitTime},#{late},now(),now())
+    on duplicate key update content_object_key=values(content_object_key),content_file_name=values(content_file_name),
+      submit_time=values(submit_time),late_submitted=values(late_submitted),score=null,teacher_remark=null,updated_at=now()
+  </insert>
+</mapper>

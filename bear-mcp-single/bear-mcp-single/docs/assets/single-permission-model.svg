@@ -1,0 +1,59 @@
+<svg width="1280" height="680" viewBox="0 0 1280 680" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">两层权限模型</title>
+  <desc id="desc">角色授权作为能力上限，Token 选择作为本次装备，二者取交集得到最终 Tools Prompts Resources</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}.card{fill:#fff;stroke:#d8e2ee;stroke-width:1.5}.blue{fill:#eff6ff;stroke:#93c5fd}.green{fill:#f0fdf4;stroke:#86efac}.orange{fill:#fff7ed;stroke:#fdba74}.purple{fill:#f5f3ff;stroke:#c4b5fd}.dark{fill:#172033}.title{fill:#172033;font:700 28px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.h{fill:#172033;font:700 18px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.sub{fill:#64748b;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.white{fill:#fff;font:700 18px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.wsub{fill:#cbd5e1;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.line{stroke:#94a3b8;stroke-width:2.4;fill:none;marker-end:url(#arrow)}.dash{stroke:#94a3b8;stroke-width:2.2;fill:none;stroke-dasharray:7 6;marker-end:url(#arrow)}.badge{fill:#475569;font:13px Arial,"PingFang SC","Microsoft YaHei",sans-serif}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/></marker>
+  </defs>
+  <rect class="bg" width="1280" height="680" rx="24"/>
+  <text class="title" x="46" y="58">两层权限：角色决定能不能，Token 决定这次带哪些</text>
+  <text class="sub" x="46" y="84">最终 MCP 能力 = 角色授权上限 ∩ Token 选择集合。它既是安全控制，也是 LLM 上下文预算管理。</text>
+
+  <rect class="dark" x="72" y="280" width="150" height="80" rx="16"/>
+  <text class="white" x="112" y="312">用户</text>
+  <text class="wsub" x="104" y="338">mcp_user</text>
+
+  <path class="line" d="M222 300 H304"/>
+  <path class="line" d="M222 340 H304"/>
+
+  <rect class="blue" x="304" y="176" width="238" height="150" rx="18"/>
+  <text class="h" x="348" y="212">第一层：角色授权</text>
+  <text class="sub" x="344" y="242">mcp_user_role</text>
+  <text class="sub" x="344" y="267">mcp_role_tool</text>
+  <text class="sub" x="344" y="292">mcp_role_prompt / resource</text>
+
+  <rect class="green" x="304" y="382" width="238" height="150" rx="18"/>
+  <text class="h" x="350" y="418">第二层：Token 选择</text>
+  <text class="sub" x="344" y="448">mcp_user_token</text>
+  <text class="sub" x="344" y="473">mcp_user_tool_selection</text>
+  <text class="sub" x="344" y="498">prompt/resource selection</text>
+
+  <path class="line" d="M542 252 C630 252 650 304 716 304"/>
+  <path class="line" d="M542 458 C630 458 650 356 716 356"/>
+
+  <rect class="orange" x="716" y="254" width="214" height="138" rx="18"/>
+  <text class="h" x="780" y="292">取交集</text>
+  <text class="sub" x="762" y="322">allowed ∩ selected</text>
+  <text class="sub" x="762" y="350">list 和 call 同源校验</text>
+
+  <path class="line" d="M930 323 H1000"/>
+  <rect class="purple" x="1000" y="166" width="210" height="98" rx="16"/>
+  <text class="h" x="1046" y="203">Tools</text>
+  <text class="sub" x="1036" y="232">tools/list / tools/call</text>
+  <rect class="purple" x="1000" y="292" width="210" height="98" rx="16"/>
+  <text class="h" x="1038" y="329">Prompts</text>
+  <text class="sub" x="1030" y="358">prompts/list / get</text>
+  <rect class="purple" x="1000" y="418" width="210" height="98" rx="16"/>
+  <text class="h" x="1030" y="455">Resources</text>
+  <text class="sub" x="1030" y="484">resources/list / read</text>
+
+  <path class="dash" d="M823 392 C896 418 930 455 1000 467"/>
+  <path class="dash" d="M823 254 C896 214 930 214 1000 214"/>
+  <path class="dash" d="M930 323 C956 332 974 340 1000 341"/>
+
+  <rect class="card" x="72" y="570" width="1138" height="58" rx="16"/>
+  <text class="h" x="104" y="605">面试表达：</text>
+  <text class="sub" x="208" y="605">角色是权限天花板，Token 是本次 Agent 装备包；减少工具数量就是减少上下文成本和模型误选概率。</text>
+</svg>

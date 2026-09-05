@@ -1,0 +1,15 @@
+sandbox_mode = "danger-full-access"
+approval_policy = "on-request"
+[mcp_servers.bear_mcp]
+url = "http://localhost:8090/mcp"
+http_headers = { "Authorization" = "Bearer mcp_dev_token" }
+startup_timeout_sec = 15
+tool_timeout_sec = 60
+enabled = true
+required = false
+
+[mcp_servers.bear_mcp.tools.list_data_sources]
+approval_mode = "approve"
+
+[mcp_servers.bear_mcp.tools.query_data_source]
+approval_mode = "approve"

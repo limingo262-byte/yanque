@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yanque.modules.exam.mapper.ExamPaperMapper">
+
+  <resultMap id="PaperItemMap" type="cn.yanque.modules.exam.pojo.ExamPaperModels$PaperItem">
+    <id property="id" column="id"/>
+    <result property="paperName" column="paper_name"/>
+    <result property="courseId" column="course_id"/>
+    <result property="courseName" column="course_name"/>
+    <result property="stageName" column="stage_name"/>
+    <result property="totalScore" column="total_score"/>
+    <result property="questionCount" column="question_count"/>
+    <result property="createdAt" column="created_at"/>
+    <result property="updatedAt" column="updated_at"/>
+  </resultMap>
+
+  <resultMap id="PaperQuestionMap" type="cn.yanque.modules.exam.pojo.ExamPaperModels$PaperQuestionItem">
+    <id property="id" column="id"/>
+    <result property="paperId" column="paper_id"/>
+    <result property="questionId" column="question_id"/>
+    <result property="questionContent" column="question_content"/>
+    <result property="questionType" column="question_type"/>
+    <result property="difficulty" column="difficulty"/>
+    <result property="questionScore" column="question_score"/>
+  </resultMap>
+
+  <select id="selectPage" resultMap="PaperItemMap">
+    select p.id, p.paper_name, p.course_id, c.course_name, p.stage_name, p.total_score,
+           (select count(1) from exam_paper_question pq where pq.paper_id = p.id) as question_count,
+           p.created_at, p.updated_at
+    from exam_paper p
+    left join sys_course c on c.id = p.course_id
+    <where>
+      <if test="req.courseId != null">
+        and p.course_id = #{req.courseId}
+      </if>
+      <if test="req.stageName != null and req.stageName != ''">
+        and p.stage_name like concat('%', #{req.stageName}, '%')
+      </if>
+      <if test="req.paperName != null and req.paperName != ''">
+        and p.paper_name like concat('%', #{req.paperName}, '%')
+      </if>
+    </where>
+    order by p.id desc
+  </select>
+
+  <select id="selectById" resultMap="PaperItemMap">
+    select p.id, p.paper_name, p.course_id, c.course_name, p.stage_name, p.total_score,
+           (select count(1) from exam_paper_question x where x.paper_id = p.id) as question_count,
+           p.created_at, p.updated_at
+    from exam_paper p
+    left join sys_course c on c.id = p.course_id
+    where p.id = #{id}
+  </select>
+
+  <select id="selectQuestions" resultMap="PaperQuestionMap">
+    select pq.id, pq.paper_id, pq.question_id, q.question_content, q.question_type, q.difficulty, pq.question_score
+    from exam_paper_question pq
+    left join exam_question q on q.id = pq.question_id
+    where pq.paper_id = #{paperId}
+    order by pq.id asc
+  </select>
+
+  <insert id="insertPaper" useGeneratedKeys="true" keyProperty="id">
+    insert into exam_paper(paper_name, course_id, stage_name, total_score, created_at, updated_at)
+    values(#{paperName}, #{courseId}, #{stageName}, #{totalScore}, now(), now())
+  </insert>
+
+  <insert id="insertPaperQuestion">
+    insert into exam_paper_question(paper_id, question_id, question_score, created_at, updated_at)
+    values(#{paperId}, #{questionId}, #{questionScore}, now(), now())
+  </insert>
+
+  <delete id="deletePaperQuestions">
+    delete from exam_paper_question where paper_id = #{paperId}
+  </delete>
+
+  <delete id="deletePaper">
+    delete from exam_paper where id = #{id}
+  </delete>
+
+  <select id="countExamByPaperId" resultType="int">
+    select count(1) from exam where paper_id = #{paperId}
+  </select>
+
+  <select id="countEnabledQuestion" resultType="int">
+    select count(1) from exam_question where id = #{questionId} and status = 'ENABLED'
+  </select>
+
+  <select id="countQuestionCourseScope" resultType="int">
+    select count(1)
+    from exam_question_course
+    where question_id = #{questionId}
+      and course_id = #{courseId}
+    <if test="stageName != null and stageName != ''">
+      and stage_name = #{stageName}
+    </if>
+  </select>
+
+  <select id="countCourse" resultType="int">
+    select count(1) from sys_course where id = #{courseId}
+  </select>
+
+  <select id="countCourseStage" resultType="int">
+    select count(1) from sys_course_detail where course_id = #{courseId} and stage_name = #{stageName}
+  </select>
+</mapper>

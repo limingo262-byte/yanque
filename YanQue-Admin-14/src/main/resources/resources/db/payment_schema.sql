@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS `order_payment` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '支付订单ID',
+  `order_no` varchar(64) NOT NULL COMMENT '支付订单号',
+  `student_phone` varchar(30) NOT NULL COMMENT '学生手机号',
+  `student_name` varchar(50) NOT NULL COMMENT '学生姓名',
+  `product_id` varchar(64) NOT NULL COMMENT '产品ID',
+  `order_amount` decimal(10,2) NOT NULL COMMENT '订单支付金额',
+  `refunded_amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '已申请退款金额',
+  `prepay_order_no` varchar(32) NOT NULL COMMENT '预支付订单号',
+  `status` varchar(30) NOT NULL COMMENT '支付订单状态',
+  `unique_order_no` varchar(128) DEFAULT NULL COMMENT '支付宝交易号',
+  `pay_success_time` datetime DEFAULT NULL COMMENT '支付成功时间',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_order_no` (`order_no`),
+  KEY `idx_student_phone` (`student_phone`),
+  KEY `idx_prepay_order_no` (`prepay_order_no`),
+  KEY `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='支付订单表';

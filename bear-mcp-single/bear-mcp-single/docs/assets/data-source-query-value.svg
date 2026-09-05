@@ -1,0 +1,56 @@
+<svg width="1280" height="620" viewBox="0 0 1280 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">动态工具受控查询数据源</title>
+  <desc id="desc">MCP Tool 可以通过 Groovy 的 runSql 查询绑定的数据源，SQL 执行器限制只读、单语句、最大行数和数据源白名单</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}.panel{fill:#fff;stroke:#d8e2ee;stroke-width:1.6}.dark{fill:#172033}.green{fill:#f0fdf4;stroke:#86efac}.blue{fill:#eff6ff;stroke:#93c5fd}.orange{fill:#fff7ed;stroke:#fdba74}.purple{fill:#f5f3ff;stroke:#c4b5fd}.cyan{fill:#ecfeff;stroke:#67e8f9}.gray{fill:#f1f5f9;stroke:#cbd5e1}.title{fill:#172033;font:700 28px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.h{fill:#172033;font:700 18px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.sub{fill:#64748b;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.tiny{fill:#64748b;font:12px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.white{fill:#fff;font:700 18px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.wsub{fill:#cbd5e1;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.line{stroke:#94a3b8;stroke-width:2.4;fill:none;marker-end:url(#arrow)}.dash{stroke:#94a3b8;stroke-width:2.1;fill:none;stroke-dasharray:7 6;marker-end:url(#arrow)}.guard{fill:#fff1f2;stroke:#fda4af}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/></marker>
+  </defs>
+
+  <rect class="bg" width="1280" height="620" rx="24"/>
+  <text class="title" x="52" y="62">为什么工具需要受控查询数据源</text>
+  <text class="sub" x="52" y="88">不是所有业务信息都有现成 API，数据分析、报表查询和补充信息经常需要直接读数据库。</text>
+
+  <rect class="dark" x="70" y="244" width="170" height="92" rx="18"/>
+  <text class="white" x="112" y="280">MCP Tool</text>
+  <text class="wsub" x="102" y="308">业务查询能力</text>
+
+  <path class="line" d="M240 290 H326"/>
+  <rect class="green" x="326" y="226" width="180" height="128" rx="18"/>
+  <text class="h" x="386" y="260">Groovy</text>
+  <text class="sub" x="364" y="288">生成 SQL</text>
+  <text class="sub" x="364" y="314">聚合 API 结果</text>
+  <text class="sub" x="364" y="338">整理返回结构</text>
+
+  <path class="line" d="M506 290 H594"/>
+  <rect class="blue" x="594" y="226" width="190" height="128" rx="18"/>
+  <text class="h" x="656" y="260">runSql</text>
+  <text class="sub" x="628" y="288">只开放受控入口</text>
+  <text class="sub" x="628" y="314">校验数据源白名单</text>
+  <text class="sub" x="628" y="338">限制查询边界</text>
+
+  <path class="line" d="M784 290 H880"/>
+  <rect class="orange" x="880" y="162" width="286" height="256" rx="22"/>
+  <text class="h" x="970" y="200">SQL 执行器</text>
+  <text class="sub" x="924" y="232">只允许 SELECT</text>
+  <text class="sub" x="924" y="260">禁止多语句</text>
+  <text class="sub" x="924" y="288">限制 SQL 长度</text>
+  <text class="sub" x="924" y="316">限制最大返回行数</text>
+  <text class="sub" x="924" y="344">返回 rows + row_count</text>
+  <text class="sub" x="924" y="372">记录调用审计</text>
+
+  <path class="line" d="M1023 418 V464"/>
+  <rect class="cyan" x="892" y="464" width="262" height="54" rx="14"/>
+  <text class="h" x="982" y="486">MySQL</text>
+  <text class="tiny" x="956" y="506">已绑定的数据源</text>
+
+  <rect class="panel" x="70" y="448" width="720" height="88" rx="18"/>
+  <text class="h" x="104" y="480">适合场景</text>
+  <text class="sub" x="104" y="506">指标查询、报表分析、订单补充信息、运营明细、没有现成 API 的内部数据读取。</text>
+  <text class="sub" x="104" y="528">Tool 可以直接读数据，但只能通过 runSql 和白名单数据源。</text>
+
+  <rect class="guard" x="70" y="132" width="720" height="62" rx="16"/>
+  <text class="h" x="104" y="160">关键边界</text>
+  <text class="sub" x="202" y="160">不是让 AI 随便连数据库，而是把数据库读取封装成受控、只读、可审计的工具能力。</text>
+</svg>

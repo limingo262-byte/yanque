@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yanque.modules.course.mapper.CourseHomeworkTemplateMapper">
+
+    <resultMap id="CourseHomeworkTemplateMap" type="cn.yanque.modules.course.pojo.entity.CourseHomeworkTemplateEntity">
+        <id property="id" column="id"/>
+        <result property="courseId" column="course_id"/>
+        <result property="teachingMode" column="teaching_mode"/>
+        <result property="stageName" column="stage_name"/>
+        <result property="dayNumber" column="day_number"/>
+        <result property="contentObjectKey" column="content_object_key"/>
+        <result property="contentFileName" column="content_file_name"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="selectById" resultMap="CourseHomeworkTemplateMap">
+        select * from course_homework_template where id = #{id}
+    </select>
+
+    <select id="selectByCourseId" resultMap="CourseHomeworkTemplateMap">
+        select * from course_homework_template
+        <where>
+            <if test="courseId != null">
+                and course_id = #{courseId}
+            </if>
+            and status = "ACTIVE"
+        </where>
+        order by id desc
+    </select>
+
+    <select id="countByCourseAndStage" resultType="int">
+        select count(*) from course_homework_template 
+        where course_id = #{courseId} 
+          and teaching_mode = #{teachingMode} 
+          and stage_name = #{stageName} 
+          and status = "ACTIVE"
+    </select>
+
+    <select id="countByCourseAndDay" resultType="int">
+        select count(*) from course_homework_template 
+        where course_id = #{courseId} 
+          and teaching_mode = #{teachingMode} 
+          and day_number = #{dayNumber} 
+          and status = "ACTIVE"
+    </select>
+
+    <insert id="insert" parameterType="cn.yanque.modules.course.pojo.entity.CourseHomeworkTemplateEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into course_homework_template (
+            course_id, teaching_mode, stage_name, day_number, 
+            content_object_key, content_file_name, status, remark
+        ) values (
+            #{courseId}, #{teachingMode}, #{stageName}, #{dayNumber},
+            #{contentObjectKey}, #{contentFileName}, #{status}, #{remark}
+        )
+    </insert>
+
+    <update id="updateById" parameterType="cn.yanque.modules.course.pojo.entity.CourseHomeworkTemplateEntity">
+        update course_homework_template
+        set updated_at = now()
+        <if test="status != null">, status = #{status}</if>
+        <if test="remark != null">, remark = #{remark}</if>
+        where id = #{id}
+    </update>
+
+    <update id="deleteById">
+        update course_homework_template set status = "INACTIVE", updated_at = now() where id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yanque.modules.homework.mapper.HomeworkMapper">
+  <select id="selectPage" resultType="cn.yanque.modules.homework.pojo.HomeworkEntity">
+    select h.*, c.class_period from sys_homework h left join sys_class c on c.id=h.class_id
+    <where>
+      <if test="title != null and title != ''">and h.title like concat('%', #{title}, '%')</if>
+      <if test="classId != null">and h.class_id=#{classId}</if>
+      <if test="homeworkDate != null">and h.homework_date=#{homeworkDate}</if>
+    </where>
+    order by h.homework_date desc, h.id desc
+  </select>
+  <select id="selectById" resultType="cn.yanque.modules.homework.pojo.HomeworkEntity">
+    select h.*, c.class_period from sys_homework h left join sys_class c on c.id=h.class_id where h.id=#{id}
+  </select>
+  <select id="countByClassAndDate" resultType="int">
+    select count(1) from sys_homework where class_id=#{classId} and homework_date=#{homeworkDate}
+  </select>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="cn.yanque.modules.homework.pojo.HomeworkEntity">
+    insert into sys_homework(title,content_object_key,content_file_name,answer_student_visible,class_id,
+      homework_date,class_content,start_time,deadline,remark,created_at,updated_at)
+    values(#{title},#{contentObjectKey},#{contentFileName},0,#{classId},#{homeworkDate},#{classContent},
+      #{startTime},#{deadline},#{remark},now(),now())
+  </insert>
+  <update id="updateAnswer">
+    update sys_homework set answer_object_key=#{objectKey},answer_file_name=#{fileName},
+      answer_student_visible=#{visible},updated_at=now() where id=#{id}
+  </update>
+  <select id="selectSubmissions" resultType="cn.yanque.modules.homework.pojo.HomeworkSubmissionEntity">
+    select s.*, st.student_name, st.student_phone
+    from sys_homework_submission s left join student st on st.id=s.student_id
+    where s.homework_id=#{homeworkId} order by s.submit_time desc,s.id desc
+  </select>
+  <select id="selectSubmissionById" resultType="cn.yanque.modules.homework.pojo.HomeworkSubmissionEntity">
+    select * from sys_homework_submission where id=#{id}
+  </select>
+  <update id="gradeSubmission">
+    update sys_homework_submission set score=#{score},teacher_remark=#{remark},updated_at=now() where id=#{id}
+  </update>
+</mapper>

@@ -1,0 +1,46 @@
+<svg width="1280" height="680" viewBox="0 0 1280 680" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Prompts Resources Skills 能力图</title>
+  <desc id="desc">展示企业 MCP Server 除 Tools 外的 Prompt、Resource、Skill 三类能力及其运行链路</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}.card{fill:#fff;stroke:#d8e2ee;stroke-width:1.5}.dark{fill:#172033}.blue{fill:#eff6ff;stroke:#93c5fd}.green{fill:#f0fdf4;stroke:#86efac}.orange{fill:#fff7ed;stroke:#fdba74}.purple{fill:#f5f3ff;stroke:#c4b5fd}.cyan{fill:#ecfeff;stroke:#67e8f9}.title{fill:#172033;font:700 28px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.h{fill:#172033;font:700 17px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.sub{fill:#64748b;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.white{fill:#fff;font:700 17px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.wsub{fill:#cbd5e1;font:14px Arial,"PingFang SC","Microsoft YaHei",sans-serif}.line{stroke:#94a3b8;stroke-width:2.4;fill:none;marker-end:url(#arrow)}.dash{stroke:#94a3b8;stroke-width:2.1;fill:none;stroke-dasharray:7 6;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/></marker>
+  </defs>
+  <rect class="bg" width="1280" height="680" rx="24"/>
+  <text class="title" x="46" y="58">不止 Tools：Prompt、Resource、Skill 也是可治理资产</text>
+  <text class="sub" x="46" y="84">initialize 先补 capability；Prompt 和 Resource 由 Filter 短路；Skill 通过公开分发和内置工具提供给 Agent 安装/读取。</text>
+
+  <rect class="dark" x="70" y="152" width="172" height="82" rx="16"/>
+  <text class="white" x="112" y="186">initialize</text>
+  <text class="wsub" x="100" y="212">补 capability</text>
+  <path class="line" d="M242 193 H318"/>
+  <rect class="cyan" x="318" y="152" width="244" height="82" rx="16"/>
+  <text class="h" x="358" y="186">prompts + resources</text>
+  <text class="sub" x="366" y="212">否则客户端不会主动调用</text>
+
+  <rect class="blue" x="88" y="326" width="300" height="212" rx="18"/>
+  <text class="h" x="170" y="362">Prompt</text>
+  <text class="sub" x="132" y="394">mcp_prompt_template</text>
+  <text class="sub" x="132" y="424">role_prompt ∩ token_prompt_selection</text>
+  <text class="sub" x="132" y="454">prompts/list：返回模板描述</text>
+  <text class="sub" x="132" y="484">prompts/get：渲染 messages</text>
+
+  <rect class="green" x="490" y="326" width="300" height="212" rx="18"/>
+  <text class="h" x="568" y="362">Resource</text>
+  <text class="sub" x="534" y="394">mcp_resource + TOS objectKey</text>
+  <text class="sub" x="534" y="424">role_resource ∩ token_resource_selection</text>
+  <text class="sub" x="534" y="454">resources/list：返回 uri</text>
+  <text class="sub" x="534" y="484">resources/read：下载文本内容</text>
+
+  <rect class="orange" x="892" y="326" width="300" height="212" rx="18"/>
+  <text class="h" x="980" y="362">Skill</text>
+  <text class="sub" x="936" y="394">mcp_skill + 文件对象</text>
+  <text class="sub" x="936" y="424">创作空间保存版本</text>
+  <text class="sub" x="936" y="454">publicapi 公开下载</text>
+  <text class="sub" x="936" y="484">GetSkillTool / SkillStudioTools</text>
+
+  <path class="dash" d="M440 234 C360 270 272 300 238 326"/>
+  <path class="dash" d="M440 234 C502 274 580 300 640 326"/>
+  <path class="dash" d="M562 193 C820 196 985 260 1042 326"/>
+</svg>

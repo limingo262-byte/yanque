@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yanque.modules.clazz.mapper.SysClassScheduleMapper">
+
+    <resultMap id="SysClassScheduleMap" type="cn.yanque.modules.clazz.pojo.entity.SysClassScheduleEntity">
+        <id property="id" column="id"/>
+        <result property="classId" column="class_id"/>
+        <result property="teacherId" column="teacher_id"/>
+        <result property="scheduleDate" column="schedule_date"/>
+        <result property="courseDetailId" column="course_detail_id"/>
+        <result property="courseContent" column="course_content"/>
+        <result property="classType" column="class_type"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="teacherName" column="teacher_name"/>
+        <result property="stageName" column="stage_name"/>
+        <result property="dayNumber" column="day_number"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        s.id, s.class_id, s.teacher_id, s.schedule_date, s.course_detail_id,
+        s.course_content, s.class_type, s.created_at, s.updated_at
+    </sql>
+
+    <select id="selectByClassIdAndRange" resultMap="SysClassScheduleMap">
+        select
+            <include refid="BaseColumns"/>
+        from sys_class_schedule s
+        where s.class_id = #{classId}
+        <if test="startDate != null">
+            and s.schedule_date &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            and s.schedule_date &lt;= #{endDate}
+        </if>
+        order by s.schedule_date asc, s.id asc
+    </select>
+
+    <select id="selectDateDetail" resultMap="SysClassScheduleMap">
+        select
+            <include refid="BaseColumns"/>,
+            coalesce(nullif(u.nickname, ''), nullif(u.real_name, ''), u.username) as teacher_name,
+            d.stage_name as stage_name,
+            d.day_number as day_number
+        from sys_class_schedule s
+        left join sys_user u on u.id = s.teacher_id
+        left join sys_course_detail d on d.id = s.course_detail_id
+        where s.class_id = #{classId}
+          and s.schedule_date = #{scheduleDate}
+        limit 1
+    </select>
+
+    <select id="countByClassId" resultType="int">
+        select count(1) from sys_class_schedule where class_id = #{classId}
+    </select>
+
+    <delete id="deleteByClassId">
+        delete from sys_class_schedule where class_id = #{classId}
+    </delete>
+
+    <insert id="insertBatch">
+        insert into sys_class_schedule
+        (class_id, teacher_id, schedule_date, course_detail_id, course_content, class_type, created_at, updated_at)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.classId}, #{item.teacherId}, #{item.scheduleDate}, #{item.courseDetailId},
+             #{item.courseContent}, #{item.classType}, now(), now())
+        </foreach>
+    </insert>
+
+    <select id="selectDateRangeByClassAndDetailIds"
+            resultType="cn.yanque.modules.clazz.pojo.dto.ScheduleDateRange">
+        <!--
+            按“当前班级 + 课程详情ID集合”定位一个阶段在课表中的日期范围。
+            老师分配时，阶段本身不直接存到课表里，所以要通过 course_detail_id 反查这一阶段从哪天到哪天。
+            这里只统计 CLASS，因为 REST / HOLIDAY / SELF_STUDY 不对应课程详情。
+        -->
+        select
+            min(s.schedule_date) as startDate,
+            max(s.schedule_date) as endDate
+        from sys_class_schedule s
+        where s.class_id = #{classId}
+          and s.class_type = 'CLASS'
+          and s.course_detail_id in
+          <foreach collection="detailIds" item="id" open="(" separator="," close=")">
+              #{id}
+          </foreach>
+    </select>
+
+    <select id="selectOccupiedTeacherIds" resultType="java.lang.Long">
+        <!--
+            查询指定日期范围内，除当前班级外，哪些老师已经被其他 CLASS 课表占用。
+            classStageInfo 会用这个结果过滤出“可选择老师”列表。
+        -->
+        select distinct s.teacher_id
+        from sys_class_schedule s
+        where s.class_id &lt;&gt; #{excludeClassId}
+          and s.teacher_id is not null
+          and s.class_type = 'CLASS'
+          and s.schedule_date &gt;= #{startDate}
+          and s.schedule_date &lt;= #{endDate}
+    </select>
+
+    <select id="countTeacherConflict" resultType="int">
+        <!--
+            阶段分配老师前的冲突校验：
+            如果同一个老师在该阶段日期范围内已经给其他班级上 CLASS，就不能再分配给当前班级。
+        -->
+        select count(1)
+        from sys_class_schedule s
+        where s.class_id &lt;&gt; #{excludeClassId}
+          and s.teacher_id = #{teacherId}
+          and s.class_type = 'CLASS'
+          and s.schedule_date &gt;= #{startDate}
+          and s.schedule_date &lt;= #{endDate}
+    </select>
+
+    <update id="updateTeacherByClassAndDetailIds">
+        <!--
+            老师确认无冲突后，批量更新当前班级该阶段的 CLASS 课表。
+            更新范围由 course_detail_id in detailIds 精确限定，避免影响其他阶段。
+        -->
+        update sys_class_schedule
+        set teacher_id = #{teacherId},
+            updated_at = now()
+        where class_id = #{classId}
+          and class_type = 'CLASS'
+          and course_detail_id in
+          <foreach collection="detailIds" item="id" open="(" separator="," close=")">
+              #{id}
+          </foreach>
+    </update>
+    <delete id="deleteByClassIdFromDate">
+        <!--
+            临时加课会重建“加课日期及之后”的整段课表。
+            先删旧数据，再把 Service 在内存中重新顺延好的新课表批量插入。
+        -->
+        delete from sys_class_schedule
+        where class_id = #{classId}
+          and schedule_date &gt;= #{fromDate}
+    </delete>
+
+    <select id="countTeacherConflictOnDate" resultType="int">
+        <!--
+            临时加课后的同日老师冲突校验：
+            只查某一天，判断该老师是否已经在其他班级有 CLASS。
+        -->
+        select count(1)
+        from sys_class_schedule s
+        where s.class_id &lt;&gt; #{excludeClassId}
+          and s.teacher_id = #{teacherId}
+          and s.class_type = 'CLASS'
+          and s.schedule_date = #{scheduleDate}
+    </select>
+    <select id="selectTeacherScheduleRows"
+            resultType="cn.yanque.modules.clazz.pojo.dto.TeacherScheduleRow">
+        select
+            s.teacher_id as teacherId,
+            coalesce(nullif(u.real_name, ''), nullif(u.nickname, ''), u.username) as teacherName,
+            s.schedule_date as scheduleDate,
+            s.class_id as classId,
+            c.class_period as classPeriod
+        from sys_class_schedule s
+        left join sys_user u on u.id = s.teacher_id
+        left join sys_class c on c.id = s.class_id
+        where s.teacher_id is not null
+          and s.class_type = 'CLASS'
+          and s.schedule_date &gt;= #{startDate}
+          and s.schedule_date &lt;= #{endDate}
+        order by s.teacher_id asc, s.schedule_date asc, s.class_id asc, s.id asc
+    </select>
+    <select id="selectDutyScheduleClassesByDate"
+            resultType="cn.yanque.modules.duty.pojo.dto.DutyScheduleClassRow">
+        select
+            s.id as scheduleId,
+            s.class_id as classId,
+            c.class_period as classPeriod,
+            c.campus_id as campusId,
+            camp.campus_location as campusName,
+            s.class_type as classType,
+            s.course_content as courseContent
+        from sys_class_schedule s
+        inner join sys_class c on c.id = s.class_id
+        left join sys_campus camp on camp.id = c.campus_id
+        where s.schedule_date = #{scheduleDate}
+          and s.class_type in ('CLASS', 'SELF_STUDY')
+        order by c.campus_id asc, c.id asc, s.id asc
+    </select>
+</mapper>

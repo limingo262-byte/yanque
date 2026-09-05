@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yanque.modules.prepay.mapper.PrepayOrderMapper">
+  <resultMap id="PrepayOrderItemMap" type="cn.yanque.modules.prepay.pojo.PrepayOrderModels$PrepayOrderItem">
+    <id property="id" column="id"/>
+    <result property="orderNo" column="order_no"/>
+    <result property="studentName" column="student_name"/>
+    <result property="studentPhone" column="student_phone"/>
+    <result property="productId" column="product_id"/>
+    <result property="productContent" column="product_content"/>
+    <result property="productAmount" column="product_amount"/>
+    <result property="discountAmount" column="discount_amount"/>
+    <result property="orderStatus" column="order_status"/>
+    <result property="createdAt" column="created_at"/>
+    <result property="updatedAt" column="updated_at"/>
+  </resultMap>
+
+  <sql id="SelectWithProduct">
+    select po.id, po.order_no, po.student_name, po.student_phone, po.product_id,
+           p.course_content product_content, po.product_amount, po.discount_amount,
+           po.order_status, po.created_at, po.updated_at
+    from prepay_order po
+    inner join order_product p on p.id = po.product_id
+  </sql>
+
+  <select id="selectPage" resultMap="PrepayOrderItemMap">
+    <include refid="SelectWithProduct"/>
+    <where>
+      <if test="req.keyword != null and req.keyword != ''">
+        and (po.student_name like concat('%', #{req.keyword}, '%')
+             or po.student_phone like concat('%', #{req.keyword}, '%'))
+      </if>
+      <if test="req.orderStatus != null and req.orderStatus != ''">
+        and po.order_status = #{req.orderStatus}
+      </if>
+    </where>
+    order by po.id desc
+  </select>
+
+  <select id="selectById" resultMap="PrepayOrderItemMap">
+    <include refid="SelectWithProduct"/>
+    where po.id = #{id}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    insert into prepay_order(order_no, student_name, student_phone, product_id,
+                             product_amount, discount_amount, order_status, created_at, updated_at)
+    values(#{orderNo}, #{studentName}, #{studentPhone}, #{productId},
+           #{productAmount}, #{discountAmount}, #{orderStatus}, now(), now())
+  </insert>
+
+  <update id="update">
+    update prepay_order
+    set student_name = #{studentName}, student_phone = #{studentPhone}, product_id = #{productId},
+        product_amount = #{productAmount}, discount_amount = #{discountAmount},
+        order_status = #{orderStatus}, updated_at = now()
+    where id = #{id}
+  </update>
+
+  <delete id="delete">delete from prepay_order where id = #{id}</delete>
+  <select id="countProduct" resultType="int">select count(1) from order_product where id = #{productId}</select>
+  <select id="countOrderNo" resultType="int">select count(1) from prepay_order where order_no = #{orderNo}</select>
+  <select id="countPayments" resultType="int">select count(1) from order_payment where prepay_order_no = #{orderNo}</select>
+</mapper>
