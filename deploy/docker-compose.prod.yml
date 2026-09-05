@@ -21,6 +21,8 @@ services:
     container_name: yanque-redis
     restart: unless-stopped
     command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:?set REDIS_PASSWORD}"]
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?set REDIS_PASSWORD}
     volumes:
       - ./data/redis:/data
     networks: [yanque-net]
