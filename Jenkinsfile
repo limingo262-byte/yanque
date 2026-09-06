@@ -11,22 +11,13 @@ pipeline {
     }
 
     environment {
-        COMPOSE_FILE = '/opt/yanque/app/deploy/docker-compose.prod.yml'
+        COMPOSE_FILE = '/opt/jenkins_home/workspace/yanque-mcp-deploy/deploy/docker-compose.prod.yml'
         COMPOSE_ENV_FILE = '/opt/yanque/.env'
         IMAGE_TAG = "${BUILD_NUMBER}"
         COMPOSE_PROFILES = "${params.DEPLOY_PROFILE}"
     }
 
         stages {
-        stage('Prepare Deploy Tree') {
-            steps {
-                sh '''
-                    mkdir -p /opt/yanque/app
-                    cp -r --no-preserve=mode,ownership,timestamps . /opt/yanque/app/
-                '''
-            }
-        }
-
         stage('Validate') {
             steps {
                 sh '/usr/bin/docker compose -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" config --quiet'
