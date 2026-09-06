@@ -11,13 +11,22 @@ pipeline {
     }
 
     environment {
-        COMPOSE_FILE = 'deploy/docker-compose.prod.yml'
+        COMPOSE_FILE = '/opt/yanque/app/deploy/docker-compose.prod.yml'
         COMPOSE_ENV_FILE = '/opt/yanque/.env'
         IMAGE_TAG = "${BUILD_NUMBER}"
         COMPOSE_PROFILES = "${params.DEPLOY_PROFILE}"
     }
 
-    stages {
+        stages {
+        stage('Prepare Deploy Tree') {
+            steps {
+                sh '''
+                    mkdir -p /opt/yanque/app
+                    cp -a . /opt/yanque/app/
+                '''
+            }
+        }
+
         stage('Validate') {
             steps {
                 sh '/usr/bin/docker compose -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" config --quiet'
