@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 WORKDIR /app
-RUN pip install --no-cache-dir uv
+RUN pip install --no-cache-dir -i https://mirrors.aliyun.com/pypi/simple uv
 ENV UV_INDEX_URL=https://mirrors.aliyun.com/pypi/simple
 COPY pyproject.toml uv.lock README.md ./
 RUN uv sync --no-dev --no-install-project

@@ -29,3 +29,4 @@ YanQue-Student-Web-14/.npm-cache/
 deploy/.env
 deploy/data/
 deploy/backup/
+deploy/yanque-local-data-*.sql
