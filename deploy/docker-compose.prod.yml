@@ -17,6 +17,7 @@ services:
       retries: 12
 
   redis:
+    profiles: ["full"]
     image: redis:7-alpine
     container_name: yanque-redis
     restart: unless-stopped
@@ -33,6 +34,7 @@ services:
       retries: 12
 
   yanque-admin:
+    profiles: ["full"]
     build:
       context: ../YanQue-Admin-14
       dockerfile: Dockerfile
@@ -40,7 +42,7 @@ services:
     container_name: yanque-admin
     restart: unless-stopped
     environment:
-      SPRING_PROFILES_ACTIVE: prod
+      SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/yanque?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD}
@@ -55,6 +57,7 @@ services:
     networks: [yanque-net]
 
   yanque-ai:
+    profiles: ["full"]
     build:
       context: ../YanQue-AI-14
       dockerfile: Dockerfile
@@ -98,6 +101,7 @@ services:
     networks: [yanque-net]
 
   admin-web:
+    profiles: ["full"]
     build:
       context: ../YanQue-Admin-Web-14
       dockerfile: Dockerfile
@@ -109,6 +113,7 @@ services:
     networks: [yanque-net]
 
   student-web:
+    profiles: ["full"]
     build:
       context: ../YanQue-Student-Web-14
       dockerfile: Dockerfile

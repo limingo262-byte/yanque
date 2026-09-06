@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    parameters {
+        choice(name: 'DEPLOY_PROFILE', choices: ['mcp', 'full'], description: 'mcp 仅部署 MCP；full 部署全部服务')
+    }
+
     options {
         timestamps()
         disableConcurrentBuilds()
@@ -10,6 +14,7 @@ pipeline {
         COMPOSE_FILE = 'deploy/docker-compose.prod.yml'
         COMPOSE_ENV_FILE = '/opt/yanque/.env'
         IMAGE_TAG = "${BUILD_NUMBER}"
+        COMPOSE_PROFILES = "${params.DEPLOY_PROFILE}"
     }
 
     stages {
@@ -21,28 +26,36 @@ pipeline {
 
         stage('Build Images') {
             steps {
-                sh 'docker compose -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" build --pull'
+                sh 'docker compose --profile "$COMPOSE_PROFILES" -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" build --pull'
             }
         }
 
         stage('Backup') {
             steps {
-                sh 'mkdir -p deploy/backup && docker exec yanque-mysql sh -c '\''mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" --all-databases'\'' > deploy/backup/mysql-${BUILD_NUMBER}.sql || true'
+                sh '''
+                    mkdir -p deploy/backup
+                    docker exec yanque-mysql sh -c 'mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" --all-databases' > "deploy/backup/mysql-${BUILD_NUMBER}.sql" || true
+                '''
             }
         }
 
         stage('Deploy') {
             steps {
-                sh 'docker compose -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" up -d --remove-orphans'
+                sh 'docker compose --profile "$COMPOSE_PROFILES" -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" up -d --remove-orphans'
             }
         }
 
         stage('Health Check') {
             steps {
-                sh 'docker compose -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" ps'
-                sh 'docker inspect --format="{{.State.Status}}" yanque-ai | grep -q running'
-                sh 'docker inspect --format="{{.State.Status}}" yanque-admin | grep -q running'
-                sh 'docker inspect --format="{{.State.Status}}" bear-mcp | grep -q running'
+                sh 'docker compose --profile "$COMPOSE_PROFILES" -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" ps'
+                sh '''
+                    docker inspect --format="{{.State.Status}}" bear-mcp | grep -q running
+                    docker inspect --format="{{.State.Status}}" yanque-mysql | grep -q running
+                    if [ "$COMPOSE_PROFILES" = "full" ]; then
+                        docker inspect --format="{{.State.Status}}" yanque-ai | grep -q running
+                        docker inspect --format="{{.State.Status}}" yanque-admin | grep -q running
+                    fi
+                '''
             }
         }
     }
