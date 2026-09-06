@@ -77,7 +77,7 @@ services:
       - "host.docker.internal:host-gateway"
     networks: [yanque-net]
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8002/health | grep -q ."]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/health', timeout=3)"]
       interval: 10s
       timeout: 5s
       retries: 12
