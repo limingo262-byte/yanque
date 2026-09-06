@@ -22,7 +22,7 @@ pipeline {
             steps {
                 sh '''
                     mkdir -p /opt/yanque/app
-                    cp -a . /opt/yanque/app/
+                    cp -r --no-preserve=mode,ownership,timestamps . /opt/yanque/app/
                 '''
             }
         }
