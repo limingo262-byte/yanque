@@ -23,4 +23,14 @@ logging:
     cn.yanque: info # 当前包下面的日志级别配置 # 没有指定的包 默认使用的是 info 级别
     root: info # 全局日志级别配置
 
+sls:
+  enabled: ${SLS_ENABLED:false}
+  endpoint: ${SLS_ENDPOINT:}
+  project: ${SLS_PROJECT:}
+  logstore: ${SLS_LOGSTORE:}
+  access-key-id: ${ALIBABA_CLOUD_ACCESS_KEY_ID:}
+  access-key-secret: ${ALIBABA_CLOUD_ACCESS_KEY_SECRET:}
+  max-range-hours: ${SLS_MAX_RANGE_HOURS:24}
+  max-rows: ${SLS_MAX_ROWS:500}
+
 

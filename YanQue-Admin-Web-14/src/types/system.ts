@@ -478,6 +478,29 @@ export interface TextToSqlRunPageParams {
   pageSize: number;
 }
 
+export interface SlsLogQueryValues {
+  fromTime: number;
+  toTime: number;
+  keyword?: string;
+  query?: string;
+  service?: string;
+  line?: number;
+}
+
+export interface SlsLogItem {
+  timestamp: number;
+  source?: string;
+  fields: Record<string, string>;
+}
+
+export interface SlsLogQueryResult {
+  records: SlsLogItem[];
+  elapsedMs: number;
+  completed: boolean;
+  analysisQuery: boolean;
+  returnedCount: number;
+}
+
 export interface TextToSqlFeedbackValues {
   feedbackResult: 'GOOD' | 'BAD';
   feedbackComment?: string;

@@ -38,6 +38,8 @@ import type {
   TextToSqlRolePermissionDetail,
   TextToSqlRolePermissionSaveValues,
   TextToSqlSchemaDomain,
+  SlsLogQueryResult,
+  SlsLogQueryValues,
   ClazzValues,
   CourseItem,
   CourseHomeworkTemplateItem,
@@ -307,6 +309,12 @@ export const textToSqlAnalysisApi = {
   },
   feedback(id: number, data: TextToSqlFeedbackValues) {
     return http.post<never, TextToSqlRunItem>(`/api/ai/text-to-sql/runs/${id}/feedback`, data);
+  },
+};
+
+export const opsLogApi = {
+  query(data: SlsLogQueryValues) {
+    return http.post<never, SlsLogQueryResult>('/api/ops/logs/query', data, { timeout: 30000 });
   },
 };
 

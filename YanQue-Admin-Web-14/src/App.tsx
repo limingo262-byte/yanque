@@ -38,6 +38,7 @@ import TextToSqlEvalQuestionsPage from './pages/TextToSqlEvalQuestionsPage';
 import TextToSqlEvalTasksPage from './pages/TextToSqlEvalTasksPage';
 import TextToSqlPermissionsPage from './pages/TextToSqlPermissionsPage';
 import TextToSqlRunsPage from './pages/TextToSqlRunsPage';
+import OpsLogsPage from './pages/OpsLogsPage';
 import LoginPage from './pages/LoginPage';
 import { authApi } from './api/system';
 
@@ -82,6 +83,7 @@ function Shell() {
     textToSqlEvalQuestions: 'Text-to-SQL评测样本',
     textToSqlEvalTasks: 'Text-to-SQL评测任务',
     textToSqlPermissions: 'Text-to-SQL权限',
+    opsLogs: '服务日志',
   };
 
   const logout = async () => {
@@ -183,6 +185,7 @@ function Shell() {
                 { key: 'roles', label: <Link to="/roles">角色管理</Link> },
                 { key: 'permissions', label: <Link to="/permissions">权限管理</Link> },
                 { key: 'configs', label: <Link to="/configs">参数配置</Link> },
+                { key: 'opsLogs', label: <Link to="/opsLogs">服务日志</Link> },
               ],
             },
           ]}
@@ -239,6 +242,7 @@ function Shell() {
             <Route path="/textToSqlEvalQuestions" element={<TextToSqlEvalQuestionsPage />} />
             <Route path="/textToSqlEvalTasks" element={<TextToSqlEvalTasksPage />} />
             <Route path="/textToSqlPermissions" element={<TextToSqlPermissionsPage />} />
+            <Route path="/opsLogs" element={<OpsLogsPage />} />
             <Route path="/knowledgeBases/:knowledgeBaseId/recall" element={<KnowledgeRecallPage />} />
             <Route path="/knowledgeBases/:knowledgeBaseId/qa" element={<KnowledgeQaPage />} />
             <Route path="/knowledgeBases/:knowledgeBaseId/documents" element={<KnowledgeDocumentsPage />} />

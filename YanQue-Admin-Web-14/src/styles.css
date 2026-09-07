@@ -4720,6 +4720,174 @@ body {
   white-space: pre-wrap;
 }
 
+.ops-logs-page {
+  min-height: 100%;
+  color: #172033;
+}
+
+.ops-logs-hero,
+.ops-logs-filter,
+.ops-logs-result {
+  margin-bottom: 14px;
+  padding: 18px 20px;
+  border: 1px solid #e1e8f0;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.04);
+}
+
+.ops-logs-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.ops-logs-kicker {
+  margin-bottom: 6px;
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.ops-logs-hero h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 24px;
+  line-height: 32px;
+}
+
+.ops-logs-hero p {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.ops-logs-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(90px, 1fr));
+  gap: 8px;
+}
+
+.ops-logs-stat {
+  min-width: 90px;
+  padding: 9px 12px;
+  border: 1px solid #e5edf5;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.ops-logs-stat span {
+  display: block;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.ops-logs-stat strong {
+  display: block;
+  margin-top: 2px;
+  color: #0f172a;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.ops-logs-filter-grid {
+  display: grid;
+  grid-template-columns: 180px minmax(280px, 1fr) 160px;
+  gap: 12px;
+}
+
+.ops-logs-query-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.7fr) minmax(340px, 1.3fr);
+  gap: 12px;
+}
+
+.ops-logs-filter .ant-input,
+.ops-logs-filter .ant-select-selector,
+.ops-logs-filter .ant-picker,
+.ops-logs-filter .ant-input-number {
+  border-radius: 8px;
+}
+
+.ops-logs-result-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.ops-logs-result-head .ant-typography {
+  margin: 0;
+}
+
+.ops-log-list {
+  display: grid;
+  gap: 10px;
+  max-height: 680px;
+  overflow: auto;
+}
+
+.ops-log-row {
+  padding: 12px 14px;
+  border: 1px solid #e5edf5;
+  border-radius: 8px;
+  background: #fbfdff;
+}
+
+.ops-log-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.ops-log-row pre {
+  max-height: 220px;
+  margin: 0;
+  overflow: auto;
+  color: #334155;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  line-height: 20px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ops-log-row details {
+  margin-top: 8px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.ops-log-row details pre {
+  margin-top: 8px;
+  padding: 10px;
+  border-radius: 6px;
+  background: #0f172a;
+  color: #dbeafe;
+}
+
+@media (max-width: 1100px) {
+  .ops-logs-hero {
+    flex-direction: column;
+  }
+
+  .ops-logs-stats {
+    width: 100%;
+  }
+
+  .ops-logs-filter-grid,
+  .ops-logs-query-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 760px) {
   .login-shell {
     grid-template-columns: 1fr;

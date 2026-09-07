@@ -24,6 +24,14 @@ pipeline {
             }
         }
 
+        stage('Maven Compile') {
+            steps {
+                dir('YanQue-Admin-14') {
+                    sh 'mvn -B -DskipTests compile'
+                }
+            }
+        }
+
         stage('Build Images') {
             steps {
                 sh '/usr/bin/docker compose --profile "$COMPOSE_PROFILES" -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" build --pull'
@@ -55,6 +63,19 @@ pipeline {
                         /usr/bin/docker inspect --format="{{.State.Status}}" yanque-ai | grep -q running
                         /usr/bin/docker inspect --format="{{.State.Status}}" yanque-admin | grep -q running
                     fi
+                '''
+            }
+        }
+
+        stage('Interface Smoke Check') {
+            when {
+                expression { params.DEPLOY_PROFILE == 'full' }
+            }
+            steps {
+                sh '''
+                    code=$(curl --silent --output /dev/null --write-out '%{http_code}' \
+                      --request POST http://127.0.0.1/yq-admin/api/ops/logs/query || true)
+                    test "$code" = "401"
                 '''
             }
         }

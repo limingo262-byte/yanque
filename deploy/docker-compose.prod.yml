@@ -53,6 +53,14 @@ services:
       SPRING_DATA_REDIS_PORT: 6379
       SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD:?set REDIS_PASSWORD}
       YANQUE_AI_BASE_URL: http://yanque-ai:8002
+      SLS_ENABLED: ${SLS_ENABLED:-false}
+      ALIBABA_CLOUD_ACCESS_KEY_ID: ${ALIBABA_CLOUD_ACCESS_KEY_ID:-}
+      ALIBABA_CLOUD_ACCESS_KEY_SECRET: ${ALIBABA_CLOUD_ACCESS_KEY_SECRET:-}
+      SLS_ENDPOINT: ${SLS_ENDPOINT:-}
+      SLS_PROJECT: ${SLS_PROJECT:-}
+      SLS_LOGSTORE: ${SLS_LOGSTORE:-}
+      SLS_MAX_RANGE_HOURS: ${SLS_MAX_RANGE_HOURS:-24}
+      SLS_MAX_ROWS: ${SLS_MAX_ROWS:-500}
     depends_on:
       mysql: { condition: service_healthy }
       redis: { condition: service_healthy }

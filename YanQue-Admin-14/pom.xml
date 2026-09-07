@@ -31,6 +31,13 @@
 
   <dependencies>
 
+    <!-- Alibaba Cloud Simple Log Service SDK -->
+    <dependency>
+      <groupId>com.aliyun.openservices</groupId>
+      <artifactId>aliyun-log</artifactId>
+      <version>0.6.76</version>
+    </dependency>
+
     <!-- yeepay基础类包 -->
     <dependency>
       <groupId>com.yeepay.yop.sdk</groupId>
