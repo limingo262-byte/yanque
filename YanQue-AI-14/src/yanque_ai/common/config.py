@@ -48,6 +48,7 @@ class Settings:
     text_to_sql_select_tables_prompt_code: str
     text_to_sql_generate_sql_prompt_code: str
     text_to_sql_result_summary_prompt_code: str
+    text_to_sql_result_summary_mode: str
     text_to_sql_metric_collection: str
     text_to_sql_metric_top_k: int
     text_to_sql_metric_recall_top_k: int
@@ -170,6 +171,11 @@ def get_settings() -> Settings:
             "text_to_sql_result_summary_system",
         ).strip()
         or "text_to_sql_result_summary_system",
+        text_to_sql_result_summary_mode=os.getenv(
+            "TEXT_TO_SQL_RESULT_SUMMARY_MODE",
+            "deterministic",
+        ).strip().lower()
+        or "deterministic",
         text_to_sql_metric_collection=os.getenv(
             "TEXT_TO_SQL_METRIC_COLLECTION",
             "text_to_sql_metrics",
