@@ -75,6 +75,9 @@ export default function StudentLearningPlanPage() {
         setCalendarYear(startDate.getFullYear());
         setCalendarMonth(startDate.getMonth() + 1);
       }
+    } catch {
+      setPlan(undefined);
+      setCalendarRows([]);
     } finally {
       setLoading(false);
     }

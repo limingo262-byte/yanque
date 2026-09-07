@@ -129,7 +129,11 @@ http.interceptors.response.use(
     return body?.data ?? response.data;
   },
   (error) => {
-    message.error(error?.response?.data?.message || error.message || '网络异常');
+    const isMissingLearningPlan = error?.response?.status === 404
+      && String(error?.config?.url || '').includes('/student/learning-plan/');
+    if (!isMissingLearningPlan) {
+      message.error(error?.response?.data?.message || error.message || '网络异常');
+    }
     return Promise.reject(error);
   },
 );
