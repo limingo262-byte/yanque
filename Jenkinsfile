@@ -2,7 +2,19 @@ pipeline {
     agent any
 
     parameters {
-        choice(name: 'DEPLOY_PROFILE', choices: ['mcp', 'full'], description: 'mcp 仅部署 MCP；full 部署全部服务')
+        choice(
+            name: 'DEPLOY_SERVICE',
+            choices: [
+                'all',
+                'yanque-admin',
+                'yanque-ai',
+                'bear-mcp',
+                'admin-web',
+                'student-web',
+                'bear-mcp-web'
+            ],
+            description: '选择需要构建并发布的服务；all 发布全部六个应用服务'
+        )
     }
 
     options {
@@ -13,22 +25,26 @@ pipeline {
     environment {
         COMPOSE_FILE = '/opt/jenkins_home/workspace/yanque-mcp-deploy/deploy/docker-compose.prod.yml'
         COMPOSE_ENV_FILE = '/opt/yanque/.env'
+        HOST_PROJECT_ROOT = '/opt/jenkins_home/workspace/yanque-mcp-deploy'
         IMAGE_TAG = "${BUILD_NUMBER}"
-        COMPOSE_PROFILES = "${params.DEPLOY_PROFILE}"
+        COMPOSE_PROFILES = 'full'
     }
 
         stages {
         stage('Validate') {
             steps {
-                sh '/usr/bin/docker compose -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" config --quiet'
+                sh '/usr/bin/docker compose --profile "$COMPOSE_PROFILES" -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" config --quiet'
             }
         }
 
         stage('Maven Compile') {
+            when {
+                expression { ['all', 'yanque-admin'].contains(params.DEPLOY_SERVICE) }
+            }
             steps {
                 sh '''
                     /usr/bin/docker run --rm \
-                      -v "$WORKSPACE/YanQue-Admin-14:/build" \
+                      -v "$HOST_PROJECT_ROOT/YanQue-Admin-14:/build" \
                       -w /build \
                       maven:3.9-eclipse-temurin-17 \
                       mvn -B -DskipTests compile
@@ -38,11 +54,22 @@ pipeline {
 
         stage('Build Images') {
             steps {
-                sh '/usr/bin/docker compose --profile "$COMPOSE_PROFILES" -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" build --pull'
+                sh '''
+                    if [ "$DEPLOY_SERVICE" = "all" ]; then
+                        /usr/bin/docker compose --profile "$COMPOSE_PROFILES" \
+                          -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" build --pull
+                    else
+                        /usr/bin/docker compose --profile "$COMPOSE_PROFILES" \
+                          -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" build --pull "$DEPLOY_SERVICE"
+                    fi
+                '''
             }
         }
 
         stage('Backup') {
+            when {
+                expression { ['all', 'yanque-admin', 'bear-mcp'].contains(params.DEPLOY_SERVICE) }
+            }
             steps {
                 sh '''
                     mkdir -p deploy/backup
@@ -53,7 +80,16 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh '/usr/bin/docker compose --profile "$COMPOSE_PROFILES" -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" up -d --remove-orphans'
+                sh '''
+                    if [ "$DEPLOY_SERVICE" = "all" ]; then
+                        /usr/bin/docker compose --profile "$COMPOSE_PROFILES" \
+                          -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" up -d --remove-orphans
+                    else
+                        /usr/bin/docker compose --profile "$COMPOSE_PROFILES" \
+                          -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" \
+                          up -d --no-deps --force-recreate "$DEPLOY_SERVICE"
+                    fi
+                '''
             }
         }
 
@@ -61,19 +97,29 @@ pipeline {
             steps {
                 sh '/usr/bin/docker compose --profile "$COMPOSE_PROFILES" -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" ps'
                 sh '''
-                    /usr/bin/docker inspect --format="{{.State.Status}}" bear-mcp | grep -q running
-                    /usr/bin/docker inspect --format="{{.State.Status}}" yanque-mysql | grep -q running
-                    if [ "$COMPOSE_PROFILES" = "full" ]; then
-                        /usr/bin/docker inspect --format="{{.State.Status}}" yanque-ai | grep -q running
-                        /usr/bin/docker inspect --format="{{.State.Status}}" yanque-admin | grep -q running
+                    if [ "$DEPLOY_SERVICE" = "all" ]; then
+                        containers="yanque-mysql yanque-redis yanque-admin yanque-ai bear-mcp yanque-admin-web yanque-student-web bear-mcp-web"
+                    else
+                        case "$DEPLOY_SERVICE" in
+                            yanque-admin) containers="yanque-admin" ;;
+                            yanque-ai) containers="yanque-ai" ;;
+                            bear-mcp) containers="bear-mcp" ;;
+                            admin-web) containers="yanque-admin-web" ;;
+                            student-web) containers="yanque-student-web" ;;
+                            bear-mcp-web) containers="bear-mcp-web" ;;
+                            *) echo "unsupported service: $DEPLOY_SERVICE"; exit 1 ;;
+                        esac
                     fi
+                    for container in $containers; do
+                        /usr/bin/docker inspect --format="{{.State.Status}}" "$container" | grep -q running
+                    done
                 '''
             }
         }
 
         stage('Interface Smoke Check') {
             when {
-                expression { params.DEPLOY_PROFILE == 'full' }
+                expression { ['all', 'yanque-admin'].contains(params.DEPLOY_SERVICE) }
             }
             steps {
                 sh '''
@@ -87,7 +133,16 @@ pipeline {
 
     post {
         always {
-            sh '/usr/bin/docker compose -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" logs --tail=120 > deploy/last-deploy.log || true'
+            sh '''
+                if [ "$DEPLOY_SERVICE" = "all" ]; then
+                    /usr/bin/docker compose --profile "$COMPOSE_PROFILES" \
+                      -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" logs --tail=120 > deploy/last-deploy.log || true
+                else
+                    /usr/bin/docker compose --profile "$COMPOSE_PROFILES" \
+                      -f "$COMPOSE_FILE" --env-file "$COMPOSE_ENV_FILE" \
+                      logs --tail=120 "$DEPLOY_SERVICE" > deploy/last-deploy.log || true
+                fi
+            '''
             archiveArtifacts artifacts: 'deploy/last-deploy.log', allowEmptyArchive: true
         }
     }
