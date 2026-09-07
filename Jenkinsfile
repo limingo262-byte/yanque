@@ -26,9 +26,13 @@ pipeline {
 
         stage('Maven Compile') {
             steps {
-                dir('YanQue-Admin-14') {
-                    sh 'mvn -B -DskipTests compile'
-                }
+                sh '''
+                    /usr/bin/docker run --rm \
+                      -v "$WORKSPACE/YanQue-Admin-14:/build" \
+                      -w /build \
+                      maven:3.9-eclipse-temurin-17 \
+                      mvn -B -DskipTests compile
+                '''
             }
         }
 
