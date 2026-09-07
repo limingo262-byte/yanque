@@ -69,7 +69,7 @@ services:
       YANQUE_AI_PORT: 8002
       DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:?set DASHSCOPE_API_KEY}
       BAILIAN_MODEL: ${BAILIAN_MODEL:-qwen3.7-plus}
-      YANQUE_ADMIN_BASE_URL: http://yanque-admin:8080/yq-admin
+      YANQUE_ADMIN_BASE_URL: http://yanque-admin:8080
       BEAR_MCP_URL: http://bear-mcp:8090/mcp
       BEAR_MCP_TOKEN: ${BEAR_MCP_TOKEN:?set BEAR_MCP_TOKEN}
       MILVUS_URI: ${MILVUS_URI:-http://host.docker.internal:19530}
