@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { message } from 'antd';
+import CryptoJS from 'crypto-js';
 
 interface ApiResponse<T> {
   code: number;
@@ -104,6 +105,12 @@ const buildSignTarget = (baseURL: string | undefined, requestUrl: string | undef
 };
 
 const hmacSha256Hex = async (source: string, secret: string) => {
+  // The deployed HTTP entrypoint is not a secure browser context, so
+  // crypto.subtle is unavailable there. Keep the same HMAC contract with
+  // CryptoJS until the site is served over HTTPS.
+  if (!window.crypto?.subtle) {
+    return CryptoJS.HmacSHA256(source, secret).toString(CryptoJS.enc.Hex);
+  }
   const encoder = new TextEncoder();
   const key = await window.crypto.subtle.importKey(
     'raw',
