@@ -25,11 +25,12 @@ public class McpToolsConfig {
                                              SkillStudioTools skillStudioTools,
                                              DataSourceTools dataSourceTools,
                                              FeishuRemoteMcpTools feishuRemoteMcpTools,
-                                             GetSkillTool getSkillTool) {
+                                             GetSkillTool getSkillTool,
+                                             RepositoryCommandTools repositoryCommandTools) {
         return MethodToolCallbackProvider.builder()
                 .toolObjects(mcpMetaTools, systemTools, calculatorTools, requestConfigTools, dynamicStudioTools,
                         resourceStudioTools, promptStudioTools, promptRuntimeTools, skillStudioTools, dataSourceTools,
-                        feishuRemoteMcpTools, getSkillTool)
+                        feishuRemoteMcpTools, getSkillTool, repositoryCommandTools)
                 .build();
     }
 }

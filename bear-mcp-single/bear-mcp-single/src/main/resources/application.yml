@@ -33,6 +33,8 @@ logging:
     org.springframework.ai.mcp: INFO
 
 bear:
+  repositories:
+    root: ${BEAR_REPOSITORIES_ROOT:/data/repositories}
   admin:
     jwt-secret: ${BEAR_ADMIN_JWT_SECRET:}
     jwt-expire-seconds: 7200
