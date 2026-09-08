@@ -37,7 +37,9 @@ pipeline {
     environment {
         COMPOSE_FILE = "${WORKSPACE}/deploy/docker-compose.prod.yml"
         COMPOSE_ENV_FILE = '/opt/yanque/.env'
-        HOST_PROJECT_ROOT = "${WORKSPACE}"
+        // The Docker daemon runs on the host, so bind mounts must use the host
+        // path even though Jenkins itself sees /var/jenkins_home.
+        HOST_PROJECT_ROOT = "/opt/jenkins_home/workspace/${JOB_NAME}"
         IMAGE_TAG = "${BUILD_NUMBER}"
         COMPOSE_PROFILES = 'full'
     }
