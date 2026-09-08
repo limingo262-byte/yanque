@@ -146,9 +146,17 @@ pipeline {
             }
             steps {
                 sh '''
-                    code=$(curl --silent --output /dev/null --write-out '%{http_code}' \
-                      --request POST http://127.0.0.1/yq-admin/api/ops/logs/query || true)
-                    test "$code" = "401"
+                    code=000
+                    for attempt in $(seq 1 30); do
+                        code=$(curl --silent --output /dev/null --write-out '%{http_code}' \
+                          --request POST http://127.0.0.1/yq-admin/api/ops/logs/query || true)
+                        if [ "$code" = "401" ]; then
+                            exit 0
+                        fi
+                        sleep 2
+                    done
+                    echo "Admin interface smoke check returned HTTP $code after retries"
+                    exit 1
                 '''
             }
         }
