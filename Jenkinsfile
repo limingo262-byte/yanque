@@ -148,8 +148,10 @@ pipeline {
                 sh '''
                     code=000
                     for attempt in $(seq 1 30); do
-                        code=$(curl --silent --output /dev/null --write-out '%{http_code}' \
-                          --request POST http://127.0.0.1/yq-admin/api/ops/logs/query || true)
+                        code=$(/usr/bin/docker exec yanque-admin sh -c \
+                          'curl --silent --output /dev/null --write-out "%{http_code}" \
+                           --request POST http://127.0.0.1:8080/yq-admin/api/ops/logs/query' \
+                          2>/dev/null || true)
                         if [ "$code" = "401" ]; then
                             exit 0
                         fi
