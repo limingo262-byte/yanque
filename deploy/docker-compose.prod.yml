@@ -61,6 +61,7 @@ services:
       SLS_LOGSTORE: ${SLS_LOGSTORE:-}
       SLS_MAX_RANGE_HOURS: ${SLS_MAX_RANGE_HOURS:-24}
       SLS_MAX_ROWS: ${SLS_MAX_ROWS:-500}
+      YANQUE_INTERNAL_TOKEN: ${YANQUE_INTERNAL_TOKEN:?set YANQUE_INTERNAL_TOKEN}
     depends_on:
       mysql: { condition: service_healthy }
       redis: { condition: service_healthy }
@@ -123,6 +124,7 @@ services:
       BEAR_TOS_UPLOAD_EXPIRE_SECONDS: ${BEAR_TOS_UPLOAD_EXPIRE_SECONDS:-600}
       BEAR_REPOSITORIES_ROOT: /data/repositories
       YANQUE_ADMIN_BASE_URL: http://yanque-admin:8080
+      YANQUE_INTERNAL_TOKEN: ${YANQUE_INTERNAL_TOKEN:?set YANQUE_INTERNAL_TOKEN}
     volumes:
       - ${YANQUE_ADMIN_SOURCE_ROOT:-/opt/yanque/app/YanQue-Admin-14}:/data/repositories/yanque-admin:ro
     depends_on:

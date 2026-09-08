@@ -24,12 +24,15 @@ public class YanqueLogQueryTools {
 
     private final ObjectMapper objectMapper;
     private final String adminBaseUrl;
+    private final String internalToken;
     private final OkHttpClient client;
 
     public YanqueLogQueryTools(ObjectMapper objectMapper,
-                               @Value("${yanque-admin.base-url:http://yanque-admin:8080}") String adminBaseUrl) {
+                               @Value("${yanque-admin.base-url:http://yanque-admin:8080}") String adminBaseUrl,
+                               @Value("${yanque-admin.internal-token:}") String internalToken) {
         this.objectMapper = objectMapper;
         this.adminBaseUrl = adminBaseUrl.replaceAll("/+$", "");
+        this.internalToken = internalToken;
         this.client = new OkHttpClient.Builder()
                 .connectTimeout(3, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
@@ -64,6 +67,7 @@ public class YanqueLogQueryTools {
                     .url(adminBaseUrl + PATH)
                     .post(RequestBody.create(objectMapper.writeValueAsString(payload), JSON))
                     .header("X-Bear-Mcp-Request", "true")
+                    .header("X-Bear-Mcp-Token", internalToken)
                     .build();
             try (Response response = client.newCall(request).execute()) {
                 String body = response.body() == null ? "" : response.body().string();

@@ -51,6 +51,7 @@ bear:
 
 yanque-admin:
   base-url: ${YANQUE_ADMIN_BASE_URL:http://yanque-admin:8080}
+  internal-token: ${YANQUE_INTERNAL_TOKEN:}
 
 feishu:
   app-id: ${FEISHU_APP_ID:}

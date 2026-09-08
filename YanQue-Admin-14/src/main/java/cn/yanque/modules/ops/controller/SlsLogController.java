@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Authenticated admin operations endpoints. */
+/** Authenticated admin operations endpoints. The internal alias is protected by BearMcpRequestUtils. */
 @RestController
 @RequestMapping({"/api/ops/logs", "/internal/ops/logs"})
 public class SlsLogController {

@@ -10,7 +10,7 @@ description: 分析 YanQue 项目线上日志，并结合只读源码和故障�
 ## 分析流程
 
 1. 确认服务、时间范围、业务关键词或 requestId/traceId；没有准确条件时先使用最近 10 分钟。
-2. 首选调用 `query_yanque_sls_logs`，传入 Unix 秒级 `from_time`、`to_time`，再按需传 `service`、`keyword`、`query`、`line`。时间范围不要超过 24 小时，首次建议 `keyword=ERROR`、`line=100`。
+2. 首选调用 `query_yanque_sls_logs`，传入 Unix 秒级 `from_time`、`to_time`，再按需传 `service`、`keyword`、`query`、`line`。时间范围不要超过 24 小时，首次建议 `keyword=ERROR`、`line=100`。该 Tool 通过 Bear 与 Admin 的内部网络和共享服务令牌访问 SLS，模型不接触云端密钥。
 3. 发现 requestId、traceId 或异常类名后，用同一标识再次调用 `query_yanque_sls_logs`，缩小到一次具体请求；分析 SQL 必须自己带 `| limit N`，并尊重返回的 `completed` 状态。
 4. 提取异常类型、报错信息、第一处业务堆栈和服务名。不要把完整日志原文直接当作结论。
 5. 对 yanque-admin 调用 `run_repository_command`，仓库参数固定为 `yanque-admin`：先用 `rg` 定位类/方法，再用 `sed` 或 `nl` 读取附近代码。源码工具只能读取，不能修改。
