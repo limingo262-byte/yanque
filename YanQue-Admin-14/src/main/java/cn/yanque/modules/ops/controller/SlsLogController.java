@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /** Authenticated admin operations endpoints. */
 @RestController
-@RequestMapping("/api/ops/logs")
+@RequestMapping({"/api/ops/logs", "/internal/ops/logs"})
 public class SlsLogController {
     private final SlsLogQueryService service;
 

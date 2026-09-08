@@ -122,8 +122,9 @@ services:
       BEAR_TOS_SECRET_KEY: ${BEAR_TOS_SECRET_KEY:?set BEAR_TOS_SECRET_KEY}
       BEAR_TOS_UPLOAD_EXPIRE_SECONDS: ${BEAR_TOS_UPLOAD_EXPIRE_SECONDS:-600}
       BEAR_REPOSITORIES_ROOT: /data/repositories
+      YANQUE_ADMIN_BASE_URL: http://yanque-admin:8080
     volumes:
-      - ${YANQUE_REPOSITORIES_ROOT:-/opt/yanque/repositories}:/data/repositories:ro
+      - ${YANQUE_ADMIN_SOURCE_ROOT:-/opt/yanque/app/YanQue-Admin-14}:/data/repositories/yanque-admin:ro
     depends_on:
       mysql: { condition: service_healthy }
     networks: [yanque-net]

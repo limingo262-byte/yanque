@@ -49,6 +49,9 @@ bear:
       secret-key: ${BEAR_TOS_SECRET_KEY:}
       upload-expire-seconds: ${BEAR_TOS_UPLOAD_EXPIRE_SECONDS:600}
 
+yanque-admin:
+  base-url: ${YANQUE_ADMIN_BASE_URL:http://yanque-admin:8080}
+
 feishu:
   app-id: ${FEISHU_APP_ID:}
   app-secret: ${FEISHU_APP_SECRET:}

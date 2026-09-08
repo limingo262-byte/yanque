@@ -26,11 +26,12 @@ public class McpToolsConfig {
                                              DataSourceTools dataSourceTools,
                                              FeishuRemoteMcpTools feishuRemoteMcpTools,
                                              GetSkillTool getSkillTool,
-                                             RepositoryCommandTools repositoryCommandTools) {
+                                             RepositoryCommandTools repositoryCommandTools,
+                                             YanqueLogQueryTools yanqueLogQueryTools) {
         return MethodToolCallbackProvider.builder()
                 .toolObjects(mcpMetaTools, systemTools, calculatorTools, requestConfigTools, dynamicStudioTools,
                         resourceStudioTools, promptStudioTools, promptRuntimeTools, skillStudioTools, dataSourceTools,
-                        feishuRemoteMcpTools, getSkillTool, repositoryCommandTools)
+                        feishuRemoteMcpTools, getSkillTool, repositoryCommandTools, yanqueLogQueryTools)
                 .build();
     }
 }

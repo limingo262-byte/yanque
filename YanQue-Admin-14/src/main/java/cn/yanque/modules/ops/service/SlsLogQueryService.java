@@ -144,10 +144,23 @@ public class SlsLogQueryService {
             }
             LinkedHashMap<String, String> fields = new LinkedHashMap<>();
             for (LogContent content : queriedLog.GetLogItem().GetLogContents()) {
-                fields.put(content.GetKey(), content.GetValue());
+                fields.put(content.GetKey(), redact(content.GetKey(), content.GetValue()));
             }
             records.add(new SlsLogItemRes(queriedLog.GetLogItem().GetTime(), queriedLog.GetSource(), fields));
         }
         return records;
+    }
+
+    private String redact(String key, String value) {
+        if (key == null) {
+            return value;
+        }
+        String normalized = key.toLowerCase();
+        if (normalized.contains("token") || normalized.contains("password")
+                || normalized.contains("secret") || normalized.contains("authorization")
+                || normalized.contains("cookie") || normalized.contains("access_key")) {
+            return "[REDACTED]";
+        }
+        return value;
     }
 }

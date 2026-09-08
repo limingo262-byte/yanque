@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 @Component
 public class RepositoryCommandTools {
     private static final Set<String> ALLOWED_COMMANDS = Set.of("rg", "sed", "nl", "head", "tail", "wc");
+    private static final Set<String> ALLOWED_REPOSITORIES = Set.of("yanque-admin");
     private static final Pattern SAFE_REPOSITORY = Pattern.compile("[a-zA-Z0-9._-]{1,80}");
     private static final int MAX_OUTPUT_CHARS = 30_000;
     private static final Duration TIMEOUT = Duration.ofSeconds(5);
@@ -69,7 +70,8 @@ public class RepositoryCommandTools {
     }
 
     private void validate(String repository, String command, List<String> args) {
-        if (repository == null || !SAFE_REPOSITORY.matcher(repository).matches()) throw new IllegalArgumentException("仓库名称不合法");
+        if (repository == null || !SAFE_REPOSITORY.matcher(repository).matches()
+                || !ALLOWED_REPOSITORIES.contains(repository)) throw new IllegalArgumentException("只允许读取 yanque-admin 源码仓库");
         if (command == null || !ALLOWED_COMMANDS.contains(command)) throw new IllegalArgumentException("命令不在只读白名单中");
         if (args == null) return;
         for (String arg : args) {
