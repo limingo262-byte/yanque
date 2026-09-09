@@ -162,6 +162,24 @@ pipeline {
                 '''
             }
         }
+
+        stage('MCP Log Analysis Permissions') {
+            when {
+                expression { ['all', 'bear-mcp'].contains(env.EFFECTIVE_DEPLOY_SERVICE) }
+            }
+            steps {
+                sh '''
+                    set -a
+                    . "$COMPOSE_ENV_FILE"
+                    set +a
+                    test -n "$MYSQL_ROOT_PASSWORD"
+                    /usr/bin/docker exec -i yanque-mysql sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" bear_mcp' \\
+                      < "$WORKSPACE/bear-mcp-single/bear-mcp-single/docs/mysql-migrate-yanque-admin-log-skill.sql"
+                    /usr/bin/docker exec -i yanque-mysql sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" bear_mcp' \\
+                      < "$WORKSPACE/bear-mcp-single/bear-mcp-single/docs/mysql-migrate-yanque-sls-log-tool.sql"
+                '''
+            }
+        }
     }
 
     post {
