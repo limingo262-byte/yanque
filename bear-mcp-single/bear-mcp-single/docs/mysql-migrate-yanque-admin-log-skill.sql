@@ -41,11 +41,9 @@ VALUES ('ADMIN', 'get_skill');
 INSERT INTO mcp_user_tool_selection (token_id, tool_name, tool_type, is_enabled)
 SELECT id, 'get_skill', 'BUILTIN', 1
 FROM mcp_user_token
-WHERE NOT EXISTS (
-    SELECT 1 FROM mcp_user_tool_selection s
-    WHERE s.token_id = mcp_user_token.id
-      AND s.tool_name = 'get_skill'
-);
+ON DUPLICATE KEY UPDATE
+    tool_type = VALUES(tool_type),
+    is_enabled = VALUES(is_enabled);
 
 -- 日志分析 Skill 依赖的源码只读工具。
 INSERT IGNORE INTO mcp_role_tool (role_code, tool_name)
@@ -54,8 +52,6 @@ VALUES ('ADMIN', 'run_repository_command');
 INSERT INTO mcp_user_tool_selection (token_id, tool_name, tool_type, is_enabled)
 SELECT id, 'run_repository_command', 'BUILTIN', 1
 FROM mcp_user_token
-WHERE NOT EXISTS (
-    SELECT 1 FROM mcp_user_tool_selection s
-    WHERE s.token_id = mcp_user_token.id
-      AND s.tool_name = 'run_repository_command'
-);
+ON DUPLICATE KEY UPDATE
+    tool_type = VALUES(tool_type),
+    is_enabled = VALUES(is_enabled);

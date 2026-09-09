@@ -73,13 +73,22 @@ public class YanqueLogQueryTools {
                 String body = response.body() == null ? "" : response.body().string();
                 Map<String, Object> result = new LinkedHashMap<>();
                 result.put("status", response.code());
-                result.put("success", response.isSuccessful());
                 if (!body.isBlank()) {
                     try {
-                        result.put("response", objectMapper.readValue(body, new TypeReference<Map<String, Object>>() {}));
+                        Map<String, Object> nested = objectMapper.readValue(body, new TypeReference<Map<String, Object>>() {});
+                        result.put("response", nested);
+                        Object nestedCode = nested.get("code");
+                        result.put("success", response.isSuccessful()
+                                && !(nestedCode instanceof Number number && number.intValue() >= 400));
+                        if (Boolean.FALSE.equals(result.get("success"))) {
+                            result.put("error", nested.getOrDefault("message", "YanQue Admin 日志查询失败"));
+                        }
                     } catch (Exception ignored) {
+                        result.put("success", response.isSuccessful());
                         result.put("response", body);
                     }
+                } else {
+                    result.put("success", response.isSuccessful());
                 }
                 return result;
             }

@@ -70,8 +70,7 @@ public class SlsLogQueryService {
                 }
             }
         } catch (LogException exception) {
-            throw BusinessException.of(CommonErrorCode.FAILED,
-                    "SLS 日志查询失败，请检查 Endpoint、Project、LogStore、索引和 RAM 权限");
+            throw BusinessException.of(CommonErrorCode.FAILED, slsFailureMessage(exception));
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
             throw BusinessException.of(CommonErrorCode.FAILED, "SLS 日志查询被中断");
@@ -104,7 +103,8 @@ public class SlsLogQueryService {
             if (!SAFE_SERVICE.matcher(req.getService().trim()).matches()) {
                 throw BusinessException.of(CommonErrorCode.PARAM_VALID_FAILED, "服务名称包含非法字符");
             }
-            String serviceFilter = "container_name:" + req.getService().trim();
+            // Logtail stores the Docker container name in the underscored field.
+            String serviceFilter = "_container_name_:" + req.getService().trim();
             if ("*".equals(query)) {
                 query = serviceFilter;
             } else if (query.contains("|")) {
@@ -162,5 +162,19 @@ public class SlsLogQueryService {
             return "[REDACTED]";
         }
         return value;
+    }
+
+    private String slsFailureMessage(LogException exception) {
+        String detail = exception == null ? "" : exception.getMessage();
+        if (detail == null || detail.isBlank()) {
+            return "SLS 日志查询失败，请检查 Endpoint、Project、LogStore、索引和 RAM 权限";
+        }
+        detail = detail.replaceAll("(?i)(access[-_ ]?key|secret|token|password|authorization)\\s*[:=]\\s*[^,; ]+",
+                "$1=[REDACTED]");
+        detail = detail.replaceAll("\\s+", " ").trim();
+        if (detail.length() > 300) {
+            detail = detail.substring(0, 300) + "...";
+        }
+        return "SLS 日志查询失败：" + detail;
     }
 }

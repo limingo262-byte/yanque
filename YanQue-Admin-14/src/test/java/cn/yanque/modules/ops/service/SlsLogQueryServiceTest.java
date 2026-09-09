@@ -53,7 +53,7 @@ class SlsLogQueryServiceTest {
         request.setQuery("level:error | select *");
         request.setService("yanque-admin");
 
-        assertEquals("level:error and container_name:yanque-admin | select *", service.buildQuery(request));
+        assertEquals("level:error and _container_name_:yanque-admin | select *", service.buildQuery(request));
     }
 
     private static SlsProperties properties(boolean enabled) {
