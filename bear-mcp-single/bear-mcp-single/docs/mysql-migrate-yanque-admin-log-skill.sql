@@ -39,7 +39,13 @@ VALUES ('ADMIN', 'get_skill');
 -- 给现有 Token 开启 get_skill，避免只配置角色却无法在 tools/list 中看到。
 INSERT INTO mcp_user_tool_selection (token_id, tool_name, tool_type, is_enabled)
 SELECT id, 'get_skill', 'BUILTIN', 1
-FROM mcp_user_token
+FROM mcp_user_token t
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM mcp_user_tool_selection s
+    WHERE s.token_id = t.id
+      AND s.tool_name = 'get_skill'
+)
 ON DUPLICATE KEY UPDATE
     tool_type = VALUES(tool_type),
     is_enabled = VALUES(is_enabled);
@@ -50,7 +56,13 @@ VALUES ('ADMIN', 'run_repository_command');
 
 INSERT INTO mcp_user_tool_selection (token_id, tool_name, tool_type, is_enabled)
 SELECT id, 'run_repository_command', 'BUILTIN', 1
-FROM mcp_user_token
+FROM mcp_user_token t
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM mcp_user_tool_selection s
+    WHERE s.token_id = t.id
+      AND s.tool_name = 'run_repository_command'
+)
 ON DUPLICATE KEY UPDATE
     tool_type = VALUES(tool_type),
     is_enabled = VALUES(is_enabled);
