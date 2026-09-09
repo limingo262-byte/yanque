@@ -47,13 +47,13 @@ class SlsLogQueryServiceTest {
     }
 
     @Test
-    void serviceFilterIsPlacedBeforeSqlPipeline() {
+    void serviceFilterIsAppliedAfterRetrievalWhenSlsFieldIsNotIndexed() {
         SlsLogQueryService service = new SlsLogQueryService(emptyClientProvider(), properties(false));
         SlsLogQueryReq request = request(100, 200);
         request.setQuery("level:error | select *");
         request.setService("yanque-admin");
 
-        assertEquals("level:error and _container_name_:yanque-admin | select *", service.buildQuery(request));
+        assertEquals("level:error | select *", service.buildQuery(request));
     }
 
     private static SlsProperties properties(boolean enabled) {

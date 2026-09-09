@@ -79,8 +79,9 @@ public class SlsLogQueryService {
         }
 
         boolean completed = response != null && response.IsCompleted();
-        return new SlsLogQueryRes(toRecords(response), System.currentTimeMillis() - started,
-                completed, analysisQuery, response == null ? 0 : response.GetCount());
+        List<SlsLogItemRes> records = toRecords(response, req.getService());
+        return new SlsLogQueryRes(records, System.currentTimeMillis() - started,
+                completed, analysisQuery, records.size());
     }
 
     private void validateRange(SlsLogQueryReq req) {
@@ -99,22 +100,12 @@ public class SlsLogQueryService {
         if (StrUtil.isBlank(query)) {
             query = StrUtil.blankToDefault(StrUtil.trim(req.getKeyword()), "*");
         }
-        if (StrUtil.isNotBlank(req.getService())) {
-            if (!SAFE_SERVICE.matcher(req.getService().trim()).matches()) {
-                throw BusinessException.of(CommonErrorCode.PARAM_VALID_FAILED, "服务名称包含非法字符");
-            }
-            // Logtail stores the Docker container name in the underscored field.
-            String serviceFilter = "_container_name_:" + req.getService().trim();
-            if ("*".equals(query)) {
-                query = serviceFilter;
-            } else if (query.contains("|")) {
-                int pipeIndex = query.indexOf('|');
-                query = query.substring(0, pipeIndex).trim() + " and " + serviceFilter
-                        + " " + query.substring(pipeIndex).trim();
-            } else {
-                query = "(" + query + ") and " + serviceFilter;
-            }
+        if (StrUtil.isNotBlank(req.getService())
+                && !SAFE_SERVICE.matcher(req.getService().trim()).matches()) {
+            throw BusinessException.of(CommonErrorCode.PARAM_VALID_FAILED, "服务名称包含非法字符");
         }
+        // _container_name_ is present in Logtail records but is not indexed in the current SLS store.
+        // Apply the service restriction after retrieval instead of making SLS reject the query.
         return query;
     }
 
@@ -133,7 +124,7 @@ public class SlsLogQueryService {
         return query.trim() + " | limit " + maxRows;
     }
 
-    private List<SlsLogItemRes> toRecords(GetLogsResponse response) {
+    private List<SlsLogItemRes> toRecords(GetLogsResponse response, String service) {
         List<SlsLogItemRes> records = new ArrayList<>();
         if (response == null || response.GetLogs() == null) {
             return records;
@@ -145,6 +136,10 @@ public class SlsLogQueryService {
             LinkedHashMap<String, String> fields = new LinkedHashMap<>();
             for (LogContent content : queriedLog.GetLogItem().GetLogContents()) {
                 fields.put(content.GetKey(), redact(content.GetKey(), content.GetValue()));
+            }
+            if (StrUtil.isNotBlank(service)
+                    && !service.trim().equals(fields.get("_container_name_"))) {
+                continue;
             }
             records.add(new SlsLogItemRes(queriedLog.GetLogItem().GetTime(), queriedLog.GetSource(), fields));
         }

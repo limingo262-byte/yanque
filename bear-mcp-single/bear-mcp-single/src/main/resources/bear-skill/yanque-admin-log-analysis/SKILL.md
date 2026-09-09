@@ -12,7 +12,7 @@ description: 分析 YanQue 项目线上日志，并结合只读源码和故障�
 1. 先调用 `tools/list` 做能力预检，确认至少存在 `query_yanque_sls_logs`。要做源码定位，还必须存在 `run_repository_command`；要走文档兜底，还必须存在 `create_log_error_analysis_document` 和 `recall_log_error_analysis_document`。缺少工具时必须明确“证据链未闭合”，不能声称已完成该步骤。
 2. 确认服务、时间范围、业务关键词或 requestId/traceId；没有准确条件时先使用最近 10 分钟。
 3. 首选调用 `query_yanque_sls_logs`，传入 Unix 秒级 `from_time`、`to_time`，再按需传 `service`、`keyword`、`query`、`line`。时间范围不要超过 24 小时，首次建议 `keyword=ERROR`、`line=100`。该 Tool 通过 Bear 与 Admin 的内部网络和共享服务令牌访问 SLS，模型不接触云端密钥。
-4. 发现 requestId、traceId 或异常类名后，用同一标识再次调用 `query_yanque_sls_logs`，缩小到一次具体请求；分析 SQL 必须自己带 `| limit N`，并尊重返回的 `completed` 状态。服务筛选依赖 Logtail 的 `_container_name_` 字段，不能自行改成 `container_name`。
+4. 发现 requestId、traceId 或异常类名后，用同一标识再次调用 `query_yanque_sls_logs`，缩小到一次具体请求；分析 SQL 必须自己带 `| limit N`，并尊重返回的 `completed` 状态。当前 LogStore 未将 `_container_name_` 建索引，服务筛选由 Admin 在返回记录上完成，不要把 `_container_name_:` 拼进 SLS 查询语句。
 5. 提取异常类型、报错信息、第一处业务堆栈和服务名。不要把完整日志原文直接当作结论。
 6. 对 yanque-admin 调用 `run_repository_command`，仓库参数固定为 `yanque-admin`：先用 `rg` 定位类/方法，再用 `sed` 或 `nl` 读取附近代码。源码工具只能读取，不能修改。
 7. 如果 SLS 暂时不可用、日志已过期或缺少堆栈，只有在两个文档工具都可用时，才能上传脱敏后的 Markdown/JSON 故障文档并召回相似故障；召回结果只能作为辅助证据。
