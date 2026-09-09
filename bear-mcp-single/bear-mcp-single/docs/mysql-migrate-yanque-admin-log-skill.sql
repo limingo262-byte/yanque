@@ -1,6 +1,5 @@
 -- 将 yanque-admin 日志分析 Skill 注册到 Bear MCP。
--- 执行前请先通过 Bear MCP 管理后台上传同名 SKILL.md 到 TOS。
--- 上传后的对象地址必须是 skills/SKILL0000000021/SKILL.md。
+-- 该 Skill 随 Bear MCP 镜像打包到 classpath，Jenkins 执行本脚本后可直接通过 get_skill 读取。
 
 INSERT INTO mcp_skill (
     skill_code, name, description, category, object_key, file_name, file_size,
@@ -10,7 +9,7 @@ INSERT INTO mcp_skill (
     'yanque-admin-log-analysis',
     '分析 yanque-admin 线上日志，并结合只读源码定位直接原因。',
     '运维排障',
-    'skills/SKILL0000000021/SKILL.md',
+    'local://bear-skill/yanque-admin-log-analysis/SKILL.md',
     'SKILL.md',
     NULL,
     NULL,

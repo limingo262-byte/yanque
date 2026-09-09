@@ -107,6 +107,7 @@ services:
     image: bear-mcp:${IMAGE_TAG:-local}
     container_name: bear-mcp
     restart: unless-stopped
+    ports: ["8090:8090"]
     environment:
       TZ: Asia/Shanghai
       JAVA_TOOL_OPTIONS: -Duser.timezone=Asia/Shanghai

@@ -30,3 +30,10 @@ deploy/.env
 deploy/data/
 deploy/backup/
 deploy/yanque-local-data-*.sql
+# Local comparison copies and packaged archives
+teacher-codes/
+.m2-cache/
+*.tar.gz
+
+# Accidentally pasted OpenSSH key files
+b3BlbnNzaC1rZXktdjE*

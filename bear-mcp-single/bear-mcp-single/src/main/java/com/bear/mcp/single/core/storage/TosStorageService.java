@@ -67,8 +67,8 @@ public class TosStorageService {
     }
 
     /**
-     * 本地开发资源读取。生产资源仍然走 TOS；local:// 只允许读取 classpath 下的固定前缀，
-     * 用于没有外部对象存储凭证时的 MCP 联调和自动化测试。
+     * 本地开发资源读取。local:// 只允许读取 classpath 下的固定前缀，
+     * 用于没有外部对象存储凭证时的 MCP 联调、预置 Skill 和自动化测试。
      */
     private String readLocalResource(String relativePath) {
         String path = relativePath == null ? "" : relativePath.trim().replace('\\', '/');
@@ -76,7 +76,7 @@ public class TosStorageService {
             throw new IllegalArgumentException("本地 Resource 路径不合法");
         }
         try {
-            ClassPathResource resource = new ClassPathResource("text-to-sql/" + path);
+            ClassPathResource resource = localClassPathResource(path);
             if (!resource.exists()) {
                 throw new IllegalStateException("本地 Resource 不存在: " + path);
             }
@@ -84,6 +84,13 @@ public class TosStorageService {
         } catch (Exception e) {
             throw new IllegalStateException("读取本地 Resource 失败: " + path, e);
         }
+    }
+
+    private ClassPathResource localClassPathResource(String path) {
+        if (path.startsWith("bear-skill/")) {
+            return new ClassPathResource(path);
+        }
+        return new ClassPathResource("text-to-sql/" + path);
     }
 
     public void uploadString(String objectKey, String content) {
