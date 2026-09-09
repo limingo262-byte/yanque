@@ -13,9 +13,9 @@ INSERT INTO mcp_skill (
     'skills/SKILL0000000021/SKILL.md',
     'SKILL.md',
     NULL,
+    NULL,
     1,
-    1,
-    1
+    2
 ) ON DUPLICATE KEY UPDATE
     name = VALUES(name),
     description = VALUES(description),
@@ -24,7 +24,14 @@ INSERT INTO mcp_skill (
     file_name = VALUES(file_name),
     creator_id = VALUES(creator_id),
     is_enabled = 1,
-    publish_status = 1;
+    publish_status = 2;
+
+-- 已存在的系统预置记录不绑定到具体用户，避免创作页因账号 ID 不同而显示为空。
+UPDATE mcp_skill
+SET creator_id = NULL,
+    is_enabled = 1,
+    publish_status = 2
+WHERE skill_code = 'SKILL0000000021';
 
 -- get_skill 是 Bear MCP 的内置工具：允许管理员角色使用。
 INSERT IGNORE INTO mcp_role_tool (role_code, tool_name)
