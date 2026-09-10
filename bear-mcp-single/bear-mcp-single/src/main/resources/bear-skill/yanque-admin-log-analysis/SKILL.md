@@ -1,43 +1,82 @@
 ---
 name: yanque-admin-log-analysis
-description: 分析 YanQue 项目线上日志，并结合只读源码和故障文档定位直接原因。
+description: 分析 YanQue 线上日志、源码、数据库状态和业务排障知识，定位技术异常或业务状态不一致原因。
 ---
 
-# YanQue 日志分析
+# YanQue 线上问题深度分析
 
-用户要求查询或分析 YanQue 项目故障时使用本 Skill。目标服务默认是 yanque-admin，也可以根据问题切换到 yanque-ai 或 bear-mcp。
+当用户描述 YanQue 线上异常、接口失败、页面无权限、订单失败、登录失败、支付后状态不一致、数据看不到等问题时使用本 Skill。第 21 天偏“日志 + 源码”定位技术异常；第 22 天升级为“日志 + 源码/Mapper + 数据库只读核验 + 业务排障知识”的闭环分析。
 
-## 分析流程
+默认服务是 `yanque-admin`。如果问题明确来自 AI、MCP 或其他服务，可以切换到 `yanque-ai` 或 `bear-mcp`。
 
-1. 先调用 `tools/list` 做能力预检，确认至少存在 `query_yanque_sls_logs`。要做源码定位，还必须存在 `run_repository_command`；要走文档兜底，还必须存在 `create_log_error_analysis_document` 和 `recall_log_error_analysis_document`。缺少工具时必须明确“证据链未闭合”，不能声称已完成该步骤。
-2. 确认服务、时间范围、业务关键词或 requestId/traceId；没有准确条件时先使用最近 10 分钟。
-3. 首选调用 `query_yanque_sls_logs`，传入 Unix 秒级 `from_time`、`to_time`，再按需传 `service`、`keyword`、`query`、`line`。时间范围不要超过 24 小时，首次建议 `keyword=ERROR`、`line=100`。该 Tool 通过 Bear 与 Admin 的内部网络和共享服务令牌访问 SLS，模型不接触云端密钥。
-4. 发现 requestId、traceId 或异常类名后，用同一标识再次调用 `query_yanque_sls_logs`，缩小到一次具体请求；分析 SQL 必须自己带 `| limit N`，并尊重返回的 `completed` 状态。当前 LogStore 未将 `_container_name_` 建索引，服务筛选由 Admin 在返回记录上完成，不要把 `_container_name_:` 拼进 SLS 查询语句。
-5. 提取异常类型、报错信息、第一处业务堆栈和服务名。不要把完整日志原文直接当作结论。
-6. 对 yanque-admin 调用 `run_repository_command`，仓库参数固定为 `yanque-admin`：先用 `rg` 定位类/方法，再用 `sed` 或 `nl` 读取附近代码。源码工具只能读取，不能修改。
-7. 如果 SLS 暂时不可用、日志已过期或缺少堆栈，只有在两个文档工具都可用时，才能上传脱敏后的 Markdown/JSON 故障文档并召回相似故障；召回结果只能作为辅助证据。
-8. 用日志事实、源码逻辑和文档召回结果交叉验证后再下结论，不读取整个仓库，也不把向量召回当作实时日志。
+## 能力预检
 
-## 工具职责
+开始前先通过客户端的 `tools/list` 确认可用工具。核心链路建议具备：
 
-- `query_yanque_sls_logs`：实时查询 SLS，是第一证据源。
-- `run_repository_command`：读取服务器上挂载的 yanque-admin 源码，验证堆栈对应的实现。
-- `create_log_error_analysis_document`：SLS 不可用时，上传已经脱敏的错误日志、堆栈和处理记录文档。
-- `recall_log_error_analysis_document`：从已向量化的故障文档中找相似案例，只能作为辅助证据。
+- `query_yanque_sls_logs`：查询 SLS 中的线上日志，是第一证据源。
+- `run_repository_command`：只读检索服务器源码，只允许读取 `yanque-admin` 仓库。
+- `list_data_sources`：查看已发布业务数据源，不返回账号密码。
+- `query_data_source`：对已发布数据源执行单条只读 SELECT。
+- `search_yanque_troubleshooting_knowledge`：检索常见业务排障知识，只能作为候选路径。
 
-不要调用旧的 `query_log_analysis_search_tool` 代替 SLS 查询；它可能是历史数据库配置，不能保证返回 Docker stdout 日志。
+缺少某个工具时，要说明缺失会影响哪一段证据链，不能假装已经验证。
 
-## 判断标准
+## 分析分级
 
-- 日志和源码相互印证：说明已确认原因。
-- 只有部分线索：说明推测依据和待确认项。
-- 只有文档召回结果：标记为历史相似案例，不能冒充本次线上事实。
-- 证据不足：明确缺少的日志、上下文或源码版本，不编造原因。
+- L1：只查日志。适合确认某时间段是否有 ERROR、401、403 或业务异常。
+- L2：日志 + 源码。适合定位异常类、代码行、条件分支和直接技术原因。
+- L3：日志 + 源码/Mapper + 数据库。适合订单、权限、登录、支付、课程开通等“业务状态不符合预期”的问题。
+- L4：在 L3 基础上检索排障知识。适合用户只描述业务现象、缺少类名/接口/异常名时，先找到候选排查路径，再用当前证据验证。
+
+## 默认流程
+
+1. 解析业务现象、时间范围、用户标识、页面/接口、订单号、手机号、用户名、商品/课程等关键词。没有准确时间时先查最近 10 分钟；用户说“今天下午 3 点左右”时，优先查 14:50-15:10，再按结果扩展。
+2. 调用 `query_yanque_sls_logs`。首次建议按 `ERROR`、业务关键词或错误提示查询，`line` 控制在 100 以内，时间范围不要超过 24 小时。时间参数使用 Unix 秒。
+3. 从日志提取 guid、traceId、requestId、订单号、用户 ID、异常类型、错误文本和第一处业务堆栈。再用同一标识二次查询上下文，确认这是不是同一次请求。
+4. 如果日志出现类名、方法名、异常文本或 Mapper 名，调用 `run_repository_command`，仓库固定传 `yanque-admin`。先 `rg` 定位，再用 `sed`、`nl`、`head`、`tail` 读取最少必要行数。
+5. 如果问题是“状态不对”而不只是报错，例如无权限、订单失败、付款后权益没生成、登录数据异常，再调用 `list_data_sources` 获取 YanQue 业务库 datasource_id，然后调用 `query_data_source` 做只读核验。SQL 必须是单条 SELECT，不要分号，限制字段并带 LIMIT。
+6. 如果用户只提供业务现象，或日志线索不足，调用 `search_yanque_troubleshooting_knowledge` 检索候选排查路径。知识结果不能直接作为结论，必须再用日志、源码或数据库验证。
+7. 将日志事实、源码条件分支、数据库当前状态和排障知识交叉验证。只有至少一个当前事实证据支撑时，才能给出明确结论。
+
+## 常见场景提示
+
+### 页面提示没有权限
+
+优先查 `无权访问`、`403`、`BusinessException`、`PermissionInterceptor`。如果日志显示 `PermissionInterceptor` 抛出 `BusinessException: 无权访问当前资源`，这是授权失败，不是未登录。下一步读取拦截器代码，并查询用户角色、角色菜单或权限编码。
+
+### 提交订单失败
+
+优先查反馈时间附近的 `订单`、`提交订单`、`order`、`支付`、`BusinessException`、`ERROR`。拿到订单号或用户 ID 后，查询订单主表、订单明细、支付记录、课程/产品权益关系，判断状态停在订单创建、支付回调还是权益开通。
+
+### 登录失败或 Token 为空
+
+优先查 `Token不能为空`、`用户名称和用户密码不正确`、`登录失败`、`401`。Token 为空通常是认证链路问题；无权访问通常是授权链路问题，二者不要混淆。
+
+### 前端中文显示乱码
+
+不要只查前端。优先核验数据库字符集、导入方式和业务配置数据，尤其是服务器数据被本地库覆盖后，中文字段、菜单、权限名称、业务配置字段可能异常。
+
+## 数据库查询约束
+
+- 只允许 `SELECT`，必须单条 SQL，不加分号。
+- 只查必要字段，不使用 `SELECT *`。
+- 必须带 `LIMIT`，先小范围核验。
+- 不输出密码、Token、Cookie、Authorization、AccessKey、私钥、证书和完整连接串。
+- 排查权限问题时，可以查询用户 ID、用户名、角色、菜单、权限编码和状态；不要输出敏感认证材料。
 
 ## 输出格式
 
-按照以下顺序输出：问题结论、影响范围、判断依据、处理建议、待确认信息。区分运营可以处理的事项和需要研发处理的事项。
+按照以下结构输出：
+
+1. 问题结论：一句话说明最可能原因，并标注“已确认”或“待确认”。
+2. 当前业务状态：说明日志和数据库显示当前请求或业务对象停在哪一步。
+3. 关键日志证据：列出时间、服务、guid/traceId、错误文本和必要堆栈摘要。
+4. 源码证据：列出类、方法、关键条件分支和代码含义。
+5. 数据库证据：列出只读查询确认的业务状态；没有查到时说明未查或未授权。
+6. 排查过程：简述从现象到日志、源码、数据库、知识检索的路径。
+7. 建议处理：区分运营可处理和研发需要处理的动作。
+8. 待确认信息：列出还需要用户或系统补充的最小信息。
 
 ## 安全限制
 
-只读取 yanque-admin 源码。不得修改文件、执行 shell 拼接或读取密钥、Token、`.env`、私钥和证书。日志输出前脱敏手机号、邮箱、Token、Cookie、Authorization、AccessKey、密码和其他敏感信息。时间、服务、请求 ID 和异常堆栈可以保留。
+只读取 `yanque-admin` 源码和已发布数据源。不得修改文件、执行写 SQL、读取密钥、Token、`.env`、私钥或证书。引用日志前要脱敏手机号、邮箱、Token、Cookie、Authorization、AccessKey、密码等敏感信息。

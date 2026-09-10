@@ -81,9 +81,12 @@ public class RequestConfigService {
 
         checkRateLimit(config);
 
+        if ("MOCK".equalsIgnoreCase(config.type())) {
+            return executeMock(config, finalParams);
+        }
         if (!"HTTP".equalsIgnoreCase(config.type())) {
             throw new IllegalArgumentException("当前单体版未接入 " + config.type()
-                    + " 客户端，请先配置 HTTP 类型或补充对应协议客户端");
+                    + " 客户端，请先配置 HTTP 和 MOCK 类型或补充对应协议客户端");
         }
 
         return executeHttp(config, finalParams);
@@ -103,9 +106,12 @@ public class RequestConfigService {
 
         Map<String, Object> finalParams = mergeParams(config.paramsDefault(), params);
 
+        if ("MOCK".equalsIgnoreCase(config.type())) {
+            return executeMock(config, finalParams);
+        }
         if (!"HTTP".equalsIgnoreCase(config.type())) {
             throw new IllegalArgumentException("当前单体版未接入 " + config.type()
-                    + " 客户端，请先配置 HTTP 类型或补充对应协议客户端");
+                    + " 客户端，请先配置 HTTP 和 MOCK 类型或补充对应协议客户端");
         }
 
         return executeHttp(config, finalParams);
@@ -150,6 +156,22 @@ public class RequestConfigService {
                 entity.getCategory(),
                 Integer.valueOf(1).equals(entity.getIsEnabled())
         );
+    }
+
+    /**
+     * 执行课堂演示用 MOCK 请求配置。
+     */
+    private Object executeMock(RequestConfig config, Map<String, Object> params) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("requestKey", config.key());
+        body.put("message", params != null ? params.getOrDefault("message", "") : "");
+        body.put("params", params != null ? params : Map.of());
+        body.put("timestamp", System.currentTimeMillis());
+
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("status", 200);
+        result.put("body", body);
+        return result;
     }
 
     /**
@@ -314,3 +336,4 @@ public class RequestConfigService {
         }
     }
 }
+
