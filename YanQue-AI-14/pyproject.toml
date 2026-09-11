@@ -24,11 +24,13 @@ dependencies = [
     "pymilvus>=2.6.7,<3",
     "pypdf>=6.16.1",
     "python-dotenv>=1.0",
+    "redis>=5.2",
     "uvicorn[standard]>=0.52.1",
 ]
 
 [project.scripts]
 yanque-ai = "yanque_ai:main"
+yanque-agent-node = "yanque_ai.agent_node.main:run"
 
 [build-system]
 requires = ["uv_build>=0.11.8,<0.12.0"]

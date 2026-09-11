@@ -10,6 +10,7 @@ from ..modules.health import router as health_router
 from ..modules.knowledge import router as knowledge_router
 from ..modules.prompts import router as prompts_router
 from ..modules.text_to_sql import router as text_to_sql_router
+from ..modules.analysis_tasks import router as analysis_tasks_router
 from .config import ConfigError
 from .errors import AIServiceError
 
@@ -49,3 +50,4 @@ def register_routes(app: FastAPI) -> None:
     app.include_router(knowledge_router.router)
     app.include_router(prompts_router.router)
     app.include_router(text_to_sql_router.router)
+    app.include_router(analysis_tasks_router.router)
