@@ -108,6 +108,27 @@ services:
       timeout: 5s
       retries: 12
 
+  feishu-bot:
+    profiles: ["full"]
+    build:
+      context: ../YanQue-AI-14
+      dockerfile: Dockerfile
+    image: yanque-ai:${IMAGE_TAG:-local}
+    container_name: yanque-feishu-bot
+    restart: unless-stopped
+    command: ["python", "-m", "yanque_ai.feishu_bot.main"]
+    environment:
+      TZ: Asia/Shanghai
+      FEISHU_APP_ID: ${FEISHU_APP_ID:?set FEISHU_APP_ID}
+      FEISHU_APP_SECRET: ${FEISHU_APP_SECRET:?set FEISHU_APP_SECRET}
+      ANALYSIS_GATEWAY_URL: http://yanque-ai:8002
+      ANALYSIS_GATEWAY_TOKEN: ${ANALYSIS_GATEWAY_TOKEN:?set ANALYSIS_GATEWAY_TOKEN}
+      FEISHU_TASK_POLL_SECONDS: ${FEISHU_TASK_POLL_SECONDS:-2}
+      FEISHU_TASK_TIMEOUT_SECONDS: ${FEISHU_TASK_TIMEOUT_SECONDS:-300}
+    depends_on:
+      yanque-ai: { condition: service_healthy }
+    networks: [yanque-net]
+
   bear-mcp:
     build:
       context: ../bear-mcp-single/bear-mcp-single

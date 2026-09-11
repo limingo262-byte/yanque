@@ -1,0 +1,9 @@
+services:
+  frps:
+    image: ghcr.io/fatedier/frps:v0.71.0
+    container_name: yanque-frps
+    restart: unless-stopped
+    network_mode: host
+    command: ["-c", "/etc/frp/frps.toml"]
+    volumes:
+      - /opt/yanque/frp/frps.toml:/etc/frp/frps.toml:ro

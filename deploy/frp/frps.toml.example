@@ -1,0 +1,6 @@
+# 服务器配置。复制到 /opt/yanque/frp/frps.toml 后替换 Token。
+bindPort = 7000
+proxyBindAddr = "172.17.0.1"
+
+auth.method = "token"
+auth.token = "replace-with-a-long-random-frp-token"

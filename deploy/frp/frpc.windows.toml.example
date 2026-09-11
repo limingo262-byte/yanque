@@ -1,0 +1,13 @@
+# Windows 配置。复制到 frpc.exe 所在目录并命名为 frpc.toml。
+serverAddr = "118.31.247.43"
+serverPort = 7000
+
+auth.method = "token"
+auth.token = "replace-with-the-same-frp-token"
+
+[[proxies]]
+name = "yanque-agent"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 8787
+remotePort = 18787

@@ -16,6 +16,7 @@ dependencies = [
     "langchain-mcp-adapters>=0.3.2",
     "langchain-openai>=1.5.1",
     "langchain-text-splitters>=1.1.2",
+    "lark-oapi>=1.7.3",
     "llama-index-core>=0.14.23",
     "llama-index-embeddings-openai>=0.6.0",
     "llama-index-vector-stores-milvus>=1.1.0",
@@ -31,6 +32,7 @@ dependencies = [
 [project.scripts]
 yanque-ai = "yanque_ai:main"
 yanque-agent-node = "yanque_ai.agent_node.main:run"
+yanque-feishu-bot = "yanque_ai.feishu_bot.main:main"
 
 [build-system]
 requires = ["uv_build>=0.11.8,<0.12.0"]

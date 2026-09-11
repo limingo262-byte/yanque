@@ -89,10 +89,7 @@ class AnalysisTaskService:
             await self._fail(task, "未配置 AGENT_NODE_URL 或 AGENT_NODE_TOKEN")
             return
 
-        headers = {
-            "Authorization": f"Bearer {self._agent_token}",
-            "ngrok-skip-browser-warning": "true",
-        }
+        headers = {"Authorization": f"Bearer {self._agent_token}"}
         task.status = "DISPATCHING"
         task.updated_at = datetime.now(timezone.utc)
         await self._save(task)
