@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import os
 import shutil
 import tempfile
@@ -11,6 +12,8 @@ from pathlib import Path
 
 from ..modules.analysis_tasks.schemas import AnalysisResult
 from .schemas import AgentJob, AgentJobRequest
+
+logger = logging.getLogger(__name__)
 
 
 RESULT_SCHEMA = {
@@ -62,6 +65,10 @@ class CodexRunner:
         )
         self.workdir = Path(os.getenv("AGENT_NODE_WORKDIR", str(Path.cwd()))).resolve()
         self.timeout_seconds = float(os.getenv("CODEX_TASK_TIMEOUT_SECONDS", "180"))
+        self.model = os.getenv("CODEX_MODEL", "gpt-5.6-sol").strip()
+        self.reasoning_effort = os.getenv("CODEX_REASONING_EFFORT", "low").strip()
+        if self.reasoning_effort not in {"minimal", "low", "medium", "high", "xhigh"}:
+            raise ValueError("CODEX_REASONING_EFFORT 配置不合法")
         concurrency = max(1, int(os.getenv("AGENT_NODE_MAX_CONCURRENCY", "1")))
         self._semaphore = asyncio.Semaphore(concurrency)
         self._jobs: dict[str, AgentJob] = {}
@@ -92,7 +99,8 @@ class CodexRunner:
                 job.status = "SUCCESS"
             except Exception as exc:
                 job.status = "FAILED"
-                job.error = f"{type(exc).__name__}: {str(exc)[:400]}"
+                logger.exception("Codex analysis job %s failed", request.task_id)
+                job.error = f"{type(exc).__name__}: {str(exc)[:4000]}"
 
     async def _execute_codex(self, question: str) -> AnalysisResult:
         executable = shutil.which(os.getenv("CODEX_EXECUTABLE", "codex"))
@@ -113,6 +121,10 @@ class CodexRunner:
                 "--ephemeral",
                 "--sandbox",
                 "read-only",
+                "--model",
+                self.model,
+                "-c",
+                f'model_reasoning_effort="{self.reasoning_effort}"',
                 "-c",
                 "mcp_servers.bear.required=true",
                 "-c",
@@ -153,7 +165,13 @@ class CodexRunner:
                 ) from None
 
             if process.returncode != 0:
-                detail = stderr.decode("utf-8", errors="replace")[-1000:]
+                stderr_text = stderr.decode("utf-8", errors="replace")
+                stdout_text = stdout.decode("utf-8", errors="replace")
+                detail = (
+                    f"stderr(first): {stderr_text[:2000]}\n"
+                    f"stderr(last): {stderr_text[-2000:]}\n"
+                    f"stdout(last): {stdout_text[-1000:]}"
+                )
                 raise RuntimeError(f"Codex 退出码 {process.returncode}: {detail}")
 
             raw = (
